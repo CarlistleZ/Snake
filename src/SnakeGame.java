@@ -3,6 +3,7 @@ import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Random;
 import javax.swing.JFrame;
 
@@ -13,18 +14,77 @@ import javax.swing.JFrame;
  */
 public class SnakeGame extends JFrame {
 
-	class GameState {
+	private static class GameState implements Comparable<GameState>{
+
 		GameState parent;
 		BoardPanel board;
 		LinkedList<Point> snake;
 		LinkedList<Direction> directions;
 		int score;
-
-		GameState(SnakeGame snakeGame){
+		int heuristic;
+		// Generate a state from a game
+		GameState(SnakeGame snakeGame, int heuristic){
 			board = snakeGame.board;
 			snake = snakeGame.snake;
 			directions = snakeGame.directions;
 			score = snakeGame.score;
+			this.parent = null;
+			this.heuristic = 0;
+		}
+		// Generate a state from a parent state
+		GameState(GameState parent, int heuristic){
+			board = parent.board;
+			snake = parent.snake;
+			directions = parent.directions;
+			score = parent.score;
+			this.parent = null;
+			this.heuristic = heuristic;
+		}
+
+		@Override
+		public int compareTo(GameState that) {
+			if (this.heuristic < that.heuristic)
+				return -1;
+			if (this.heuristic > that.heuristic)
+				return 1;
+			return 0;
+		}
+		public LinkedList<GameState> neighbors (){
+			LinkedList<GameState> res = new LinkedList<>();
+			Direction last = directions.peekLast();
+			if(last == Direction.East || last == Direction.West) {
+				// Turn up or down
+				GameState upNeighbor = new GameState(this, this.heuristic);
+				upNeighbor.directions.add(Direction.North);
+				Point head = upNeighbor.snake.peekFirst();
+				head.x++;
+				upNeighbor.snake.addFirst(head);
+				res.add(upNeighbor);
+
+				GameState downNeighbor = new GameState(this, this.heuristic);
+				downNeighbor.directions.add(Direction.South);
+				Point head2 = downNeighbor.snake.peekFirst();
+				head2.x--;
+				downNeighbor.snake.addFirst(head2);
+				res.add(downNeighbor);
+			} else {
+				// Turn left or right
+				GameState leftNeighbor = new GameState(this, this.heuristic);
+				leftNeighbor.directions.add(Direction.West);
+				Point head = leftNeighbor.snake.peekFirst();
+				head.y--;
+				leftNeighbor.snake.addFirst(head);
+				res.add(leftNeighbor);
+
+				GameState rightNeighbor = new GameState(this, this.heuristic);
+				rightNeighbor.directions.add(Direction.East);
+				Point head2 = rightNeighbor.snake.peekFirst();
+				head2.y++;
+				rightNeighbor.snake.addFirst(head2);
+				res.add(rightNeighbor);
+			}
+
+			return res;
 		}
 	}
 		
@@ -110,6 +170,16 @@ public class SnakeGame extends JFrame {
 	 * The number of points that the next fruit will award us.
 	 */
 	private int nextFruitScore;
+
+	/**
+	 * X position of the fruit
+	 */
+	private int fruitX;
+
+	/**
+	 * Y position of the fruit
+	 */
+	private int fruitY;
 	
 	/**
 	 * Creates a new SnakeGame instance. Creates a new window,
@@ -342,8 +412,6 @@ public class SnakeGame extends JFrame {
 			//Get the current frame's start time.
 			long start = System.nanoTime();
 
-			aStar();
-
 			//Update the logic timer.
 			logicTimer.update();
 
@@ -351,6 +419,7 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
+				aStar();
 				updateGame();
 			}
 
@@ -376,6 +445,17 @@ public class SnakeGame extends JFrame {
 
 	private void aStar() {
 		// TODO
+		PriorityQueue<GameState> queue = new PriorityQueue<>();
+		int h = Math.abs(snake.peekFirst().x - fruitX) + Math.abs(snake.peekFirst().y - fruitY);
+		queue.add(new GameState(this,  h));
+		GameState currentState = queue.poll();
+
+		while (!isGoal(currentState.snake)){
+			for(GameState neighbor : currentState.neighbors())
+				queue.add(neighbor);
+			currentState =queue.poll();
+		}
+
 
 	}
 
@@ -576,6 +656,14 @@ public class SnakeGame extends JFrame {
 	public boolean isPaused() {
 		return isPaused;
 	}
+
+	public boolean isGoal(LinkedList<Point> snake) {
+		return getHeuristic(snake) == 0;
+	}
+
+	public int getHeuristic(LinkedList<Point> snake){
+		return Math.abs(snake.peekFirst().x - fruitX) + Math.abs(snake.peekFirst().y - fruitY);
+	}
 	
 	/**
 	 * Spawns a new fruit onto the board.
@@ -606,6 +694,9 @@ public class SnakeGame extends JFrame {
 				if(type == null || type == TileType.Fruit) {
 					if(++freeFound == index) {
 						board.setTile(x, y, TileType.Fruit);
+						fruitX = x;
+						fruitY = y;
+						System.out.println("Fruit: " + x + " " + y);
 						break;
 					}
 				}
