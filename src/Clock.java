@@ -2,8 +2,7 @@
 
 /**
  * The {@code Clock} class is responsible for tracking the number of cycles
- * that have elapsed over time. 
- * @author Brendan Jones
+ * that have elapsed over time.
  *
  */
 public class Clock {

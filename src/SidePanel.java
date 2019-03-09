@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 /**
  * The {@code SidePanel} class is responsible for displaying statistics and
  * controls to the player.
- * @author Brendan Jones
  *
  */
 public class SidePanel extends JPanel {
@@ -97,7 +96,7 @@ public class SidePanel extends JPanel {
 		g.drawString("Move Down: S / Down Arrowkey", LARGE_OFFSET, drawY += MESSAGE_STRIDE);
 		g.drawString("Move Left: A / Left Arrowkey", LARGE_OFFSET, drawY += MESSAGE_STRIDE);
 		g.drawString("Move Right: D / Right Arrowkey", LARGE_OFFSET, drawY += MESSAGE_STRIDE);
-		g.drawString("Pause Game: P", LARGE_OFFSET, drawY += MESSAGE_STRIDE);
+		g.drawString("Pause Game: P / Space", LARGE_OFFSET, drawY += MESSAGE_STRIDE);
 	}
 
 }

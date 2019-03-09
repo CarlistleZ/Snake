@@ -9,15 +9,9 @@ import javax.swing.JPanel;
 /**
  * The {@code BoardPanel} class is responsible for managing and displaying the
  * contents of the game board.
- * @author Brendan Jones
  *
  */
 public class BoardPanel extends JPanel {
-	
-	/**
-	 * Serial Version UID.
-	 */
-	private static final long serialVersionUID = -1102632585936750607L;
 
 	/**
 	 * The number of columns on the board. (Should be odd so we can start in
@@ -175,7 +169,7 @@ public class BoardPanel extends JPanel {
 				smallMessage = "Press Enter to Restart";
 			} else if(game.isPaused()) {
 				largeMessage = "Paused";
-				smallMessage = "Press P to Resume";
+				smallMessage = "Press P or space to Resume";
 			}
 			
 			/*

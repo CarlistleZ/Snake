@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -9,7 +10,6 @@ import javax.swing.JFrame;
 
 /**
  * The {@code SnakeGame} class is responsible for handling much of the game's logic.
- * @author Brendan Jones
  *
  */
 public class SnakeGame extends JFrame {
@@ -17,81 +17,49 @@ public class SnakeGame extends JFrame {
 	private static class GameState implements Comparable<GameState>{
 
 		GameState parent;
-		BoardPanel board;
 		LinkedList<Point> snake;
 		LinkedList<Direction> directions;
-		int score;
-		int heuristic;
+		BoardPanel board;
+		int moves;
+		int priority;
+
 		// Generate a state from a game
-		GameState(SnakeGame snakeGame, int heuristic){
+		GameState(SnakeGame snakeGame, int moves, int priority){
 			board = snakeGame.board;
 			snake = snakeGame.snake;
 			directions = snakeGame.directions;
-			score = snakeGame.score;
+			this.moves = moves;
 			this.parent = null;
-			this.heuristic = 0;
+			this.priority = priority;
 		}
 		// Generate a state from a parent state
-		GameState(GameState parent, int heuristic){
+		GameState(GameState parent, int moves, int priority){
 			board = parent.board;
 			snake = parent.snake;
 			directions = parent.directions;
-			score = parent.score;
+			this.moves = moves;
 			this.parent = null;
-			this.heuristic = heuristic;
+			this.priority = priority;
+		}
+		// Generate everything as null
+		GameState(){
+			parent = null;
+			snake = null;
+			directions = null;
+			board = null;
+			moves = Integer.MIN_VALUE;
+			priority = Integer.MIN_VALUE;
 		}
 
 		@Override
 		public int compareTo(GameState that) {
-			if (this.heuristic < that.heuristic)
+			if (this.priority < that.priority)
 				return -1;
-			if (this.heuristic > that.heuristic)
+			if (this.priority > that.priority)
 				return 1;
 			return 0;
 		}
-		public LinkedList<GameState> neighbors (){
-			LinkedList<GameState> res = new LinkedList<>();
-			Direction last = directions.peekLast();
-			if(last == Direction.East || last == Direction.West) {
-				// Turn up or down
-				GameState upNeighbor = new GameState(this, this.heuristic);
-				upNeighbor.directions.add(Direction.North);
-				Point head = upNeighbor.snake.peekFirst();
-				head.x++;
-				upNeighbor.snake.addFirst(head);
-				res.add(upNeighbor);
-
-				GameState downNeighbor = new GameState(this, this.heuristic);
-				downNeighbor.directions.add(Direction.South);
-				Point head2 = downNeighbor.snake.peekFirst();
-				head2.x--;
-				downNeighbor.snake.addFirst(head2);
-				res.add(downNeighbor);
-			} else {
-				// Turn left or right
-				GameState leftNeighbor = new GameState(this, this.heuristic);
-				leftNeighbor.directions.add(Direction.West);
-				Point head = leftNeighbor.snake.peekFirst();
-				head.y--;
-				leftNeighbor.snake.addFirst(head);
-				res.add(leftNeighbor);
-
-				GameState rightNeighbor = new GameState(this, this.heuristic);
-				rightNeighbor.directions.add(Direction.East);
-				Point head2 = rightNeighbor.snake.peekFirst();
-				head2.y++;
-				rightNeighbor.snake.addFirst(head2);
-				res.add(rightNeighbor);
-			}
-
-			return res;
-		}
 	}
-		
-	/**
-	 * The Serial Version UID.
-	 */
-	private static final long serialVersionUID = 6678292058307426314L;
 
 	/**
 	 * The number of milliseconds that should pass between each frame.
@@ -157,7 +125,7 @@ public class SnakeGame extends JFrame {
 	private LinkedList<Direction> directions;
 	
 	/**
-	 * The current score.
+	 * The current moves.
 	 */
 	private int score;
 	
@@ -218,7 +186,14 @@ public class SnakeGame extends JFrame {
 				 */
 				case KeyEvent.VK_W:
 				case KeyEvent.VK_UP:
-					goUp();
+					if(!isPaused && !isGameOver) {
+						if(directions.size() < MAX_DIRECTIONS) {
+							Direction last = directions.peekLast();
+							if(last != Direction.South && last != Direction.North) {
+								directions.addLast(Direction.North);
+							}
+						}
+					}
 					break;
 
 				/*
@@ -230,7 +205,14 @@ public class SnakeGame extends JFrame {
 				 */	
 				case KeyEvent.VK_S:
 				case KeyEvent.VK_DOWN:
-					goDown();
+					if(!isPaused && !isGameOver) {
+						if(directions.size() < MAX_DIRECTIONS) {
+							Direction last = directions.peekLast();
+							if(last != Direction.North && last != Direction.South) {
+								directions.addLast(Direction.South);
+							}
+						}
+					}
 					break;
 				
 				/*
@@ -242,7 +224,14 @@ public class SnakeGame extends JFrame {
 				 */						
 				case KeyEvent.VK_A:
 				case KeyEvent.VK_LEFT:
-					goLeft();
+					if(!isPaused && !isGameOver) {
+						if(directions.size() < MAX_DIRECTIONS) {
+							Direction last = directions.peekLast();
+							if(last != Direction.East && last != Direction.West) {
+								directions.addLast(Direction.West);
+							}
+						}
+					}
 					break;
 			
 				/*
@@ -254,13 +243,21 @@ public class SnakeGame extends JFrame {
 				 */		
 				case KeyEvent.VK_D:
 				case KeyEvent.VK_RIGHT:
-					goRight();
+					if(!isPaused && !isGameOver) {
+						if(directions.size() < MAX_DIRECTIONS) {
+							Direction last = directions.peekLast();
+							if(last != Direction.West && last != Direction.East) {
+								directions.addLast(Direction.East);
+							}
+						}
+					}
 					break;
 				
 				/*
 				 * If the game is not over, toggle the paused flag and update
 				 * the logicTimer's pause flag accordingly.
 				 */
+				case KeyEvent.VK_SPACE:
 				case KeyEvent.VK_P:
 					if(!isGameOver) {
 						isPaused = !isPaused;
@@ -290,54 +287,10 @@ public class SnakeGame extends JFrame {
 		setVisible(true);
 	}
 
-	private void goUp(){
-		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if(last != Direction.South && last != Direction.North) {
-					directions.addLast(Direction.North);
-				}
-			}
-		}
-	}
-
-	private void goDown(){
-		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if(last != Direction.North && last != Direction.South) {
-					directions.addLast(Direction.South);
-				}
-			}
-		}
-	}
-
-	private void goLeft(){
-		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if(last != Direction.East && last != Direction.West) {
-					directions.addLast(Direction.West);
-				}
-			}
-		}
-	}
-
-	private void goRight(){
-		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if(last != Direction.West && last != Direction.East) {
-					directions.addLast(Direction.East);
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Starts the game running.
 	 */
-	private void startGame() {
+	private void startGame(boolean useAStar) {
 		/*
 		 * Initialize everything we're going to be using.
 		 */
@@ -365,6 +318,8 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
+				if(useAStar)
+					AStar();
 				updateGame();
 			}
 
@@ -389,74 +344,89 @@ public class SnakeGame extends JFrame {
 	}
 
 	/**
-	 * Simulates the start of the game running.
+	 *  aStar generates the direction at a given game instant
 	 */
-	private void simStartGame() {
-		/*
-		 * Initialize everything we're going to be using.
-		 */
-		this.random = new Random();
-		this.snake = new LinkedList<>();
-		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(7.0f);
-		this.isNewGame = true;
-
-		//Set the timer to paused initially.
-		logicTimer.setPaused(true);
-
-		/*
-		 * This is the game loop. It will update and render the game and will
-		 * continue to run until the game window is closed.
-		 */
-		while(true) {
-			//Get the current frame's start time.
-			long start = System.nanoTime();
-
-			//Update the logic timer.
-			logicTimer.update();
-
-			/*
-			 * If a cycle has elapsed on the logic timer, then update the game.
-			 */
-			if(logicTimer.hasElapsedCycle()) {
-				aStar();
-				updateGame();
-			}
-
-			//Repaint the board and side panel with the new content.
-			board.repaint();
-			side.repaint();
-
-			/*
-			 * Calculate the delta time between since the start of the frame
-			 * and sleep for the excess time to cap the frame rate. While not
-			 * incredibly accurate, it is sufficient for our purposes.
-			 */
-			long delta = (System.nanoTime() - start) / 1000000L;
-			if(delta < FRAME_TIME) {
-				try {
-					Thread.sleep(FRAME_TIME - delta);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	private void aStar() {
+	private void AStar() {
 		// TODO
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
 		int h = Math.abs(snake.peekFirst().x - fruitX) + Math.abs(snake.peekFirst().y - fruitY);
-		queue.add(new GameState(this,  h));
+		queue.add(new GameState(this, 0, h));
 		GameState currentState = queue.poll();
 
 		while (!isGoal(currentState.snake)){
-			for(GameState neighbor : currentState.neighbors())
-				queue.add(neighbor);
+			System.out.println("change state");
+			for(GameState neighborStates : neighbors(currentState))
+				queue.add(neighborStates);
 			currentState =queue.poll();
 		}
+		// Construct path from states
+		directions.addAll(currentState.directions);
 
+	}
 
+	public LinkedList<GameState> neighbors (GameState state) {
+		LinkedList<Point> snake = state.snake;
+		LinkedList<Direction> directions = state.directions;
+		LinkedList<GameState> res = new LinkedList<>();
+
+		Direction last = state.directions.peekLast();
+		if(last == Direction.East || last == Direction.West) {
+			// Turn West
+			GameState leftNeighbor = new GameState();
+			leftNeighbor.parent = state;
+			leftNeighbor.moves = state.moves + 1;
+			leftNeighbor.board = state.board;
+			leftNeighbor.directions = state.directions;
+			leftNeighbor.directions.add(Direction.West);
+			leftNeighbor.snake = state.snake;
+			Point leftHead = leftNeighbor.snake.peekFirst();
+			leftHead.x--;
+			leftNeighbor.snake.addLast(leftHead);
+			leftNeighbor.priority = state.priority + 1 + getHeuristic(leftNeighbor.snake);
+			res.add(leftNeighbor);
+			// Turn East
+			GameState rightNeighbor = new GameState();
+			rightNeighbor.parent = state;
+			rightNeighbor.moves = state.moves + 1;
+			rightNeighbor.board = state.board;
+			rightNeighbor.directions = state.directions;
+			rightNeighbor.directions.add(Direction.East);
+			rightNeighbor.snake = state.snake;
+			Point rightHead = rightNeighbor.snake.peekFirst();
+			rightHead.x++;
+			rightNeighbor.snake.addLast(rightHead);
+			rightNeighbor.priority = state.priority + 1 + getHeuristic(rightNeighbor.snake);
+			res.add(rightNeighbor);
+		}else {
+			// Turn South
+			GameState upNeighbor = new GameState();
+			upNeighbor.parent = state;
+			upNeighbor.moves = state.moves + 1;
+			upNeighbor.board = state.board;
+			upNeighbor.directions = state.directions;
+			upNeighbor.directions.add(Direction.North);
+			upNeighbor.snake = state.snake;
+			Point upHead = upNeighbor.snake.peekFirst();
+			upHead.y--;
+			upNeighbor.snake.addLast(upHead);
+			upNeighbor.priority = state.priority + 1 + getHeuristic(upNeighbor.snake);
+			res.add(upNeighbor);
+			// Turn East
+			GameState downNeighbor = new GameState();
+			downNeighbor.parent = state;
+			downNeighbor.moves = state.moves + 1;
+			downNeighbor.board = state.board;
+			downNeighbor.directions = state.directions;
+			downNeighbor.directions.add(Direction.South);
+			downNeighbor.snake = state.snake;
+			Point downHead = downNeighbor.snake.peekFirst();
+			downHead.y++;
+			downNeighbor.snake.addLast(downHead);
+			downNeighbor.priority = state.priority + 1 + getHeuristic(downNeighbor.snake);
+			res.add(downNeighbor);
+		}
+
+		return res;
 	}
 
 	/**
@@ -474,7 +444,7 @@ public class SnakeGame extends JFrame {
 		 * Here we handle the different possible collisions.
 		 * 
 		 * Fruit: If we collided with a fruit, we increment the number of
-		 * fruits that we've eaten, update the score, and spawn a new fruit.
+		 * fruits that we've eaten, update the moves, and spawn a new fruit.
 		 * 
 		 * SnakeBody: If we collided with our tail (or a wall), we flag that
 		 * the game is over and pause the game.
@@ -482,7 +452,7 @@ public class SnakeGame extends JFrame {
 		 * If no collision occurred, we simply decrement the number of points
 		 * that the next fruit will give us if it's high enough. This adds a
 		 * bit of skill to the game as collecting fruits more quickly will
-		 * yield a higher score.
+		 * yield a higher moves.
 		 */
 		if(collision == TileType.Fruit) {
 			fruitsEaten++;
@@ -586,7 +556,7 @@ public class SnakeGame extends JFrame {
 	 */
 	private void resetGame() {
 		/*
-		 * Reset the score statistics. (Note that nextFruitPoints is reset in
+		 * Reset the moves statistics. (Note that nextFruitPoints is reset in
 		 * the spawnFruit function later on).
 		 */
 		this.score = 0;
@@ -620,7 +590,24 @@ public class SnakeGame extends JFrame {
 		 * default direction.
 		 */
 		directions.clear();
-		directions.add(Direction.North);
+		int randInt = random.nextInt(4);
+		switch (randInt){
+			case 0:
+				directions.add(Direction.North);
+				break;
+			case 1:
+				directions.add(Direction.South);
+				break;
+			case 2:
+				directions.add(Direction.East);
+				break;
+			case 3:
+				directions.add(Direction.West);
+				break;
+            default:
+            	break;
+		}
+
 		
 		/*
 		 * Reset the logic timer.
@@ -669,7 +656,7 @@ public class SnakeGame extends JFrame {
 	 * Spawns a new fruit onto the board.
 	 */
 	private void spawnFruit() {
-		//Reset the score for this fruit to 100.
+		//Reset the moves for this fruit to 100.
 		this.nextFruitScore = 100;
 
 		/*
@@ -696,7 +683,6 @@ public class SnakeGame extends JFrame {
 						board.setTile(x, y, TileType.Fruit);
 						fruitX = x;
 						fruitY = y;
-						System.out.println("Fruit: " + x + " " + y);
 						break;
 					}
 				}
@@ -705,8 +691,8 @@ public class SnakeGame extends JFrame {
 	}
 	
 	/**
-	 * Gets the current score.
-	 * @return The score.
+	 * Gets the current moves.
+	 * @return The moves.
 	 */
 	public int getScore() {
 		return score;
@@ -721,8 +707,8 @@ public class SnakeGame extends JFrame {
 	}
 	
 	/**
-	 * Gets the next fruit score.
-	 * @return The next fruit score.
+	 * Gets the next fruit moves.
+	 * @return The next fruit moves.
 	 */
 	public int getNextFruitScore() {
 		return nextFruitScore;
@@ -736,13 +722,10 @@ public class SnakeGame extends JFrame {
 		return directions.peek();
 	}
 	
-	/**
-	 * Entry point of the program.
-	 * @param args Unused.
-	 */
+
 	public static void main(String[] args) {
 		SnakeGame snake = new SnakeGame();
-		snake.startGame();
+		snake.startGame(true);
 	}
 
 }
