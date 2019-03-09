@@ -12,6 +12,21 @@ import javax.swing.JFrame;
  *
  */
 public class SnakeGame extends JFrame {
+
+	class GameState {
+		GameState parent;
+		BoardPanel board;
+		LinkedList<Point> snake;
+		LinkedList<Direction> directions;
+		int score;
+
+		GameState(SnakeGame snakeGame){
+			board = snakeGame.board;
+			snake = snakeGame.snake;
+			directions = snakeGame.directions;
+			score = snakeGame.score;
+		}
+	}
 		
 	/**
 	 * The Serial Version UID.
@@ -133,14 +148,7 @@ public class SnakeGame extends JFrame {
 				 */
 				case KeyEvent.VK_W:
 				case KeyEvent.VK_UP:
-					if(!isPaused && !isGameOver) {
-						if(directions.size() < MAX_DIRECTIONS) {
-							Direction last = directions.peekLast();
-							if(last != Direction.South && last != Direction.North) {
-								directions.addLast(Direction.North);
-							}
-						}
-					}
+					goUp();
 					break;
 
 				/*
@@ -152,14 +160,7 @@ public class SnakeGame extends JFrame {
 				 */	
 				case KeyEvent.VK_S:
 				case KeyEvent.VK_DOWN:
-					if(!isPaused && !isGameOver) {
-						if(directions.size() < MAX_DIRECTIONS) {
-							Direction last = directions.peekLast();
-							if(last != Direction.North && last != Direction.South) {
-								directions.addLast(Direction.South);
-							}
-						}
-					}
+					goDown();
 					break;
 				
 				/*
@@ -171,14 +172,7 @@ public class SnakeGame extends JFrame {
 				 */						
 				case KeyEvent.VK_A:
 				case KeyEvent.VK_LEFT:
-					if(!isPaused && !isGameOver) {
-						if(directions.size() < MAX_DIRECTIONS) {
-							Direction last = directions.peekLast();
-							if(last != Direction.East && last != Direction.West) {
-								directions.addLast(Direction.West);
-							}
-						}
-					}
+					goLeft();
 					break;
 			
 				/*
@@ -190,14 +184,7 @@ public class SnakeGame extends JFrame {
 				 */		
 				case KeyEvent.VK_D:
 				case KeyEvent.VK_RIGHT:
-					if(!isPaused && !isGameOver) {
-						if(directions.size() < MAX_DIRECTIONS) {
-							Direction last = directions.peekLast();
-							if(last != Direction.West && last != Direction.East) {
-								directions.addLast(Direction.East);
-							}
-						}
-					}
+					goRight();
 					break;
 				
 				/*
@@ -232,6 +219,50 @@ public class SnakeGame extends JFrame {
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
+
+	private void goUp(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.South && last != Direction.North) {
+					directions.addLast(Direction.North);
+				}
+			}
+		}
+	}
+
+	private void goDown(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.North && last != Direction.South) {
+					directions.addLast(Direction.South);
+				}
+			}
+		}
+	}
+
+	private void goLeft(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.East && last != Direction.West) {
+					directions.addLast(Direction.West);
+				}
+			}
+		}
+	}
+
+	private void goRight(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.West && last != Direction.East) {
+					directions.addLast(Direction.East);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Starts the game running.
@@ -245,7 +276,7 @@ public class SnakeGame extends JFrame {
 		this.directions = new LinkedList<>();
 		this.logicTimer = new Clock(7.0f);
 		this.isNewGame = true;
-		
+
 		//Set the timer to paused initially.
 		logicTimer.setPaused(true);
 
@@ -256,21 +287,21 @@ public class SnakeGame extends JFrame {
 		while(true) {
 			//Get the current frame's start time.
 			long start = System.nanoTime();
-			
+
 			//Update the logic timer.
 			logicTimer.update();
-			
+
 			/*
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
 				updateGame();
 			}
-			
+
 			//Repaint the board and side panel with the new content.
 			board.repaint();
 			side.repaint();
-			
+
 			/*
 			 * Calculate the delta time between since the start of the frame
 			 * and sleep for the excess time to cap the frame rate. While not
@@ -286,7 +317,66 @@ public class SnakeGame extends JFrame {
 			}
 		}
 	}
-	
+
+	/**
+	 * Simulates the start of the game running.
+	 */
+	private void simStartGame() {
+		/*
+		 * Initialize everything we're going to be using.
+		 */
+		this.random = new Random();
+		this.snake = new LinkedList<>();
+		this.directions = new LinkedList<>();
+		this.logicTimer = new Clock(7.0f);
+		this.isNewGame = true;
+
+		//Set the timer to paused initially.
+		logicTimer.setPaused(true);
+
+		/*
+		 * This is the game loop. It will update and render the game and will
+		 * continue to run until the game window is closed.
+		 */
+		while(true) {
+			//Get the current frame's start time.
+			long start = System.nanoTime();
+			aStar();
+
+			//Update the logic timer.
+			logicTimer.update();
+
+			/*
+			 * If a cycle has elapsed on the logic timer, then update the game.
+			 */
+			if(logicTimer.hasElapsedCycle()) {
+				updateGame();
+			}
+
+			//Repaint the board and side panel with the new content.
+			board.repaint();
+			side.repaint();
+
+			/*
+			 * Calculate the delta time between since the start of the frame
+			 * and sleep for the excess time to cap the frame rate. While not
+			 * incredibly accurate, it is sufficient for our purposes.
+			 */
+			long delta = (System.nanoTime() - start) / 1000000L;
+			if(delta < FRAME_TIME) {
+				try {
+					Thread.sleep(FRAME_TIME - delta);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void aStar() {
+		// TODO
+	}
+
 	/**
 	 * Updates the game's logic.
 	 */
@@ -408,7 +498,7 @@ public class SnakeGame extends JFrame {
 				
 		return old;
 	}
-	
+
 	/**
 	 * Resets the game's variables to their default states and starts a new game.
 	 */
