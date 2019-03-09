@@ -341,6 +341,7 @@ public class SnakeGame extends JFrame {
 		while(true) {
 			//Get the current frame's start time.
 			long start = System.nanoTime();
+
 			aStar();
 
 			//Update the logic timer.
@@ -375,6 +376,7 @@ public class SnakeGame extends JFrame {
 
 	private void aStar() {
 		// TODO
+
 	}
 
 	/**
