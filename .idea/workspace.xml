@@ -3,12 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="ff78e393-f8de-4c81-ac73-3978da1f8b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/BoardPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/BoardPanel$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/BoardPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/BoardPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SidePanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SidePanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BoardPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BoardPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Clock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Clock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Direction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Direction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SidePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SidePanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SnakeGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SnakeGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TileType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TileType.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,14 +20,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="356" column="31" lean-forward="true" selection-start-line="356" selection-start-column="31" selection-end-line="356" selection-end-column="31" />
+            <state relative-caret-position="403">
+              <caret line="379" column="64" selection-start-line="379" selection-start-column="64" selection-end-line="379" selection-end-column="64" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="docComment;field#FRAME_TIME#0;class#SnakeGame#0" />
+                <element signature="method#GameState#2;class#GameState#0;class#SnakeGame#0" />
                 <element signature="docComment;field#MIN_SNAKE_LENGTH#0;class#SnakeGame#0" />
                 <element signature="docComment;field#MAX_DIRECTIONS#0;class#SnakeGame#0" />
                 <element signature="docComment;field#board#0;class#SnakeGame#0" />
@@ -44,49 +45,32 @@
                 <element signature="docComment;field#fruitX#0;class#SnakeGame#0" />
                 <element signature="docComment;field#fruitY#0;class#SnakeGame#0" />
                 <element signature="docComment;method#SnakeGame#0;class#SnakeGame#0" />
+                <element signature="method#neighbors#0;class#SnakeGame#0" />
                 <element signature="docComment;method#resetGame#0;class#SnakeGame#0" />
                 <element signature="docComment;method#isNewGame#0;class#SnakeGame#0" />
-                <element signature="e#16083#16084#0" expanded="true" />
+                <element signature="e#16999#17000#0" expanded="true" />
                 <element signature="docComment;method#isGameOver#0;class#SnakeGame#0" />
-                <element signature="e#16248#16249#0" expanded="true" />
+                <element signature="e#17164#17165#0" expanded="true" />
                 <element signature="docComment;method#isPaused#0;class#SnakeGame#0" />
-                <element signature="e#16408#16409#0" expanded="true" />
-                <element signature="e#16497#16498#0" expanded="true" />
-                <element signature="e#17890#17891#0" expanded="true" />
-                <element signature="e#18025#18026#0" expanded="true" />
-                <element signature="e#18164#18165#0" expanded="true" />
-                <element signature="e#18322#18323#0" expanded="true" />
+                <element signature="e#17324#17325#0" expanded="true" />
+                <element signature="e#18859#18860#0" expanded="true" />
+                <element signature="e#18994#18995#0" expanded="true" />
+                <element signature="e#19133#19134#0" expanded="true" />
+                <element signature="e#19291#19292#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Clock.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1281">
-              <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
-              <folding>
-                <element signature="e#4123#4124#0" expanded="true" />
-                <element signature="e#4176#4177#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="410">
-              <caret line="30" column="43" lean-forward="true" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
+            <state relative-caret-position="1017">
+              <caret line="112" column="20" selection-start-line="112" selection-start-column="20" selection-end-line="112" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2165#2166#0" expanded="true" />
-                <element signature="e#2203#2204#0" expanded="true" />
-                <element signature="e#2443#2444#0" expanded="true" />
-                <element signature="e#2481#2482#0" expanded="true" />
-                <element signature="e#2677#2678#0" expanded="true" />
-                <element signature="e#2715#2716#0" expanded="true" />
+                <element signature="e#2626#2627#0" expanded="true" />
+                <element signature="e#2685#2686#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,7 +79,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SidePanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
+            <state relative-caret-position="1395">
               <caret line="98" column="43" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
             </state>
           </provider>
@@ -119,6 +103,15 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Clock.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
@@ -138,16 +131,16 @@
         <option value="$PROJECT_DIR$/src/Direction.java" />
         <option value="$PROJECT_DIR$/src/TileType.java" />
         <option value="$PROJECT_DIR$/src/SidePanel.java" />
-        <option value="$PROJECT_DIR$/src/SnakeGame.java" />
         <option value="$PROJECT_DIR$/src/BoardPanel.java" />
+        <option value="$PROJECT_DIR$/src/SnakeGame.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="11" />
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="800" />
+    <option name="x" value="-1911" />
+    <option name="y" value="-207" />
+    <option name="width" value="1894" />
+    <option name="height" value="961" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -156,7 +149,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -173,10 +165,11 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552157868386" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552230849297" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
@@ -231,7 +224,14 @@
       <option name="project" value="LOCAL" />
       <updated>1552125622802</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add gamestate, aStar todo">
+      <created>1552157883695</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1552157883695</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView">
@@ -244,7 +244,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="800" extended-state="6" />
+    <frame x="-1755" y="-111" width="1440" height="793" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" weight="0.16666667" />
@@ -255,15 +255,15 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.22316384" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.19258203" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.23373494" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49946752" weight="0.13762376" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5005325" side_tool="true" weight="0.1373494" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.15841584" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.32891566" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.15831435" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.17689015" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -272,7 +272,7 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.1695279" />
+      <window_info active="true" anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.1695279" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.16666667" />
@@ -308,16 +308,9 @@
     <option name="LAST_COMMIT_MESSAGE" value="Add gamestate, aStar todo" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/TileType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="54" selection-start-line="2" selection-start-column="54" selection-end-line="2" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/SidePanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
+        <state relative-caret-position="1395">
           <caret line="98" column="43" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
         </state>
       </provider>
@@ -329,24 +322,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/TileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="54" selection-start-line="2" selection-start-column="54" selection-end-line="2" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Clock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1281">
+        <state relative-caret-position="60">
           <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1017">
+          <caret line="112" column="20" selection-start-line="112" selection-start-column="20" selection-end-line="112" selection-end-column="20" />
           <folding>
-            <element signature="e#4123#4124#0" expanded="true" />
-            <element signature="e#4176#4177#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#2626#2627#0" expanded="true" />
+            <element signature="e#2685#2686#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="356" column="31" lean-forward="true" selection-start-line="356" selection-start-column="31" selection-end-line="356" selection-end-column="31" />
+        <state relative-caret-position="403">
+          <caret line="379" column="64" selection-start-line="379" selection-start-column="64" selection-end-line="379" selection-end-column="64" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="docComment;field#FRAME_TIME#0;class#SnakeGame#0" />
+            <element signature="method#GameState#2;class#GameState#0;class#SnakeGame#0" />
             <element signature="docComment;field#MIN_SNAKE_LENGTH#0;class#SnakeGame#0" />
             <element signature="docComment;field#MAX_DIRECTIONS#0;class#SnakeGame#0" />
             <element signature="docComment;field#board#0;class#SnakeGame#0" />
@@ -364,34 +372,18 @@
             <element signature="docComment;field#fruitX#0;class#SnakeGame#0" />
             <element signature="docComment;field#fruitY#0;class#SnakeGame#0" />
             <element signature="docComment;method#SnakeGame#0;class#SnakeGame#0" />
+            <element signature="method#neighbors#0;class#SnakeGame#0" />
             <element signature="docComment;method#resetGame#0;class#SnakeGame#0" />
             <element signature="docComment;method#isNewGame#0;class#SnakeGame#0" />
-            <element signature="e#16083#16084#0" expanded="true" />
+            <element signature="e#16999#17000#0" expanded="true" />
             <element signature="docComment;method#isGameOver#0;class#SnakeGame#0" />
-            <element signature="e#16248#16249#0" expanded="true" />
+            <element signature="e#17164#17165#0" expanded="true" />
             <element signature="docComment;method#isPaused#0;class#SnakeGame#0" />
-            <element signature="e#16408#16409#0" expanded="true" />
-            <element signature="e#16497#16498#0" expanded="true" />
-            <element signature="e#17890#17891#0" expanded="true" />
-            <element signature="e#18025#18026#0" expanded="true" />
-            <element signature="e#18164#18165#0" expanded="true" />
-            <element signature="e#18322#18323#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="30" column="43" lean-forward="true" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2165#2166#0" expanded="true" />
-            <element signature="e#2203#2204#0" expanded="true" />
-            <element signature="e#2443#2444#0" expanded="true" />
-            <element signature="e#2481#2482#0" expanded="true" />
-            <element signature="e#2677#2678#0" expanded="true" />
-            <element signature="e#2715#2716#0" expanded="true" />
+            <element signature="e#17324#17325#0" expanded="true" />
+            <element signature="e#18859#18860#0" expanded="true" />
+            <element signature="e#18994#18995#0" expanded="true" />
+            <element signature="e#19133#19134#0" expanded="true" />
+            <element signature="e#19291#19292#0" expanded="true" />
           </folding>
         </state>
       </provider>

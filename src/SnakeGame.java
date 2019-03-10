@@ -22,6 +22,7 @@ public class SnakeGame extends JFrame {
 		BoardPanel board;
 		int moves;
 		int priority;
+		int x, y;
 
 		// Generate a state from a game
 		GameState(SnakeGame snakeGame, int moves, int priority){
@@ -31,6 +32,8 @@ public class SnakeGame extends JFrame {
 			this.moves = moves;
 			this.parent = null;
 			this.priority = priority;
+			x = snake.peekFirst().x;
+			y = snake.peekFirst().y;
 		}
 		// Generate a state from a parent state
 		GameState(GameState parent, int moves, int priority){
@@ -40,6 +43,8 @@ public class SnakeGame extends JFrame {
 			this.moves = moves;
 			this.parent = null;
 			this.priority = priority;
+			x = snake.peekFirst().x;
+			y = snake.peekFirst().y;
 		}
 		// Generate everything as null
 		GameState(){
@@ -49,6 +54,8 @@ public class SnakeGame extends JFrame {
 			board = null;
 			moves = Integer.MIN_VALUE;
 			priority = Integer.MIN_VALUE;
+			x = 0;
+			y = 0;
 		}
 
 		@Override
@@ -290,7 +297,7 @@ public class SnakeGame extends JFrame {
 	/**
 	 * Starts the game running.
 	 */
-	private void startGame(boolean useAStar) {
+	private void startGame() {
 		/*
 		 * Initialize everything we're going to be using.
 		 */
@@ -318,8 +325,6 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
-				if(useAStar)
-					AStar();
 				updateGame();
 			}
 
@@ -344,23 +349,44 @@ public class SnakeGame extends JFrame {
 	}
 
 	/**
-	 *  aStar generates the direction at a given game instant
+	 *  AStar generates the direction at a given game instant
+	 *  This method is used each time the fruit is generated
 	 */
 	private void AStar() {
 		// TODO
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
-		int h = Math.abs(snake.peekFirst().x - fruitX) + Math.abs(snake.peekFirst().y - fruitY);
-		queue.add(new GameState(this, 0, h));
+		queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
 
-		while (!isGoal(currentState.snake)){
-			System.out.println("change state");
-			for(GameState neighborStates : neighbors(currentState))
-				queue.add(neighborStates);
+		boolean visitedArr[][] = new boolean[board.getHeight()][board.getWidth()];
+		for(int i = 0; i < visitedArr.length; i++){
+			for(int j = 0; j < visitedArr[0].length; j++){
+				visitedArr[i][j] = false;
+			}
+		}
+
+		while (!isGoal(currentState.snake)) {
+			if(visitedArr[currentState.x][currentState.y]){
+				// Continues if this state has been visited
+				currentState = queue.poll();
+				continue;
+			}
+			visitedArr[currentState.x][currentState.y] = true;
+			for (GameState neighborState : neighbors(currentState)){
+				Point snakeHead = neighborState.snake.peekFirst();
+				if(snakeHead.x < 0 || snakeHead.x >= BoardPanel.COL_COUNT || snakeHead.y < 0 || snakeHead.y >= BoardPanel.ROW_COUNT)
+					visitedArr[snakeHead.x][snakeHead.y] = true;
+				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody)
+					visitedArr[snakeHead.x][snakeHead.y] = true;
+				else
+					queue.add(neighborState);
+			}
 			currentState =queue.poll();
 		}
 		// Construct path from states
-		directions.addAll(currentState.directions);
+		// TODO
+		// Generate an action list: a list of directions at (x, y)
+
 
 	}
 
@@ -425,7 +451,7 @@ public class SnakeGame extends JFrame {
 			downNeighbor.priority = state.priority + 1 + getHeuristic(downNeighbor.snake);
 			res.add(downNeighbor);
 		}
-
+		System.out.println("Number of neighbors: " + res.size());
 		return res;
 	}
 
@@ -645,7 +671,7 @@ public class SnakeGame extends JFrame {
 	}
 
 	public boolean isGoal(LinkedList<Point> snake) {
-		return getHeuristic(snake) == 0;
+		return (snake.peekFirst().x == fruitX) && (snake.peekFirst().y == fruitY);
 	}
 
 	public int getHeuristic(LinkedList<Point> snake){
@@ -688,6 +714,9 @@ public class SnakeGame extends JFrame {
 				}
 			}
 		}
+
+		// Use A Star to generate a path to the goal
+		AStar();
 	}
 	
 	/**
@@ -725,7 +754,7 @@ public class SnakeGame extends JFrame {
 
 	public static void main(String[] args) {
 		SnakeGame snake = new SnakeGame();
-		snake.startGame(true);
+		snake.startGame();
 	}
 
 }

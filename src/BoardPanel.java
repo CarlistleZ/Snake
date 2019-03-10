@@ -109,6 +109,10 @@ public class BoardPanel extends JPanel {
 	public TileType getTile(int x, int y) {
 		return tiles[y * ROW_COUNT + x];
 	}
+
+	public TileType getTile(Point point) {
+		return getTile((int)point.getX(), (int)point.getY());
+	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
