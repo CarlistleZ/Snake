@@ -319,23 +319,23 @@ public class SnakeGame extends JFrame {
 	 */
 	private void checkActionList(Point head){
 		// TODO
-		int checkSum = head.x * BoardPanel.COL_COUNT + head.y;
+		int checkSum = head.x + BoardPanel.COL_COUNT * head.y;
 		if (directionMap.containsKey(checkSum)){
 			Direction dir = directionMap.get(checkSum);
 			if(dir == null)
 				return;
 			switch (dir){
 				case East:
-					goEast();
+					directions.addLast(Direction.East);
 					break;
 				case West:
-					goWest();
+					directions.addLast(Direction.West);
 					break;
 				case North:
-					goNorth();
+					directions.addLast(Direction.North);
 					break;
 				case South:
-					goSouth();
+					directions.addLast(Direction.South);
 					break;
 			}
 			directionMap.remove(checkSum);
@@ -374,7 +374,6 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
-				checkActionList(snake.peekFirst());
 				updateGame();
 			}
 
@@ -403,12 +402,20 @@ public class SnakeGame extends JFrame {
 	 *  This method is used each time the fruit is generated
 	 */
 	private void AStar() {
-		// TODO
 
+		/*
+		 * Clear the directions
+		 */
+		directions.clear();
+
+
+		// TODO
+		System.out.println("Direction size: " + directions.size());
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
 		queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
-
+		System.out.println("Initial position: " + currentState.x+", "+currentState.y);
+		int secondLastX = 0, secondLastY = 0;
 		boolean visitedArr[][] = new boolean[board.getHeight()][board.getWidth()];
 		for(int i = 0; i < visitedArr.length; i++){
 			for(int j = 0; j < visitedArr[0].length; j++){
@@ -443,20 +450,47 @@ public class SnakeGame extends JFrame {
 				System.err.println("Queue is empty!!!");
 				break;
 			}
-			if(isGoal(currentState.snake))
+			if(isGoal(currentState.snake)) {
+				System.out.println("GOALLLLLL FOUND!!!!\t\t Fruit: "+fruitX+", "+fruitY);
 				break;
+			}
 		}
 		// Construct path from states
 		// TODO
 		// Generate an action list: a list of directions at (x, y)
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
-			Point head = currentState.snake.peekFirst();
-			directionMap.put(head.x * BoardPanel.COL_COUNT + head.y, getStateDirection(currentState));
+			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
+			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+" should go "+getStateDirection(currentState));
+			if(currentState.parent.parent == null){
+				secondLastX = currentState.x;
+				secondLastY = currentState.y;
+			}
+
 			currentState = currentState.parent;
 		}
-		directionMap.put(currentState.snake.peekFirst().x * BoardPanel.COL_COUNT +
-				currentState.snake.peekFirst().y, getStateDirection(currentState));
+		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
+
+//		int randInt = random.nextInt(4);
+//		switch (randInt){
+//			case 0:
+//				directions.add(Direction.North);
+//				break;
+//			case 1:
+//				directions.add(Direction.South);
+//				break;
+//			case 2:
+//				directions.add(Direction.East);
+//				break;
+//			case 3:
+//				directions.add(Direction.West);
+//				break;
+//			default:
+//				break;
+//		}
+		directions.add(getInitialStateDirection(secondLastX, secondLastY));
+
+
 
 	}
 	private Direction getStateDirection(GameState state){
@@ -474,12 +508,30 @@ public class SnakeGame extends JFrame {
 				return Direction.West;
 			else if(myY == parentY + 1)
 				return Direction.South;
-			else if(myY == parentY -1)
+			else if(myY == parentY - 1)
 				return Direction.North;
 			else{
 				System.err.println("Error in state!");
 				return null;
 			}
+		}
+	}
+
+	private Direction getInitialStateDirection(int secondToLastX, int secondToLastY){
+		int  midX, midY;
+		midX = BoardPanel.COL_COUNT / 2;
+		midY = BoardPanel.ROW_COUNT / 2;
+		if(secondToLastX == midX + 1)
+			return Direction.East;
+		else if(secondToLastX == midX - 1)
+			return Direction.West;
+		else if(secondToLastY == midY - 1)
+			return Direction.South;
+		else if(secondToLastY == midY +1)
+			return Direction.North;
+		else{
+			System.err.println("Error: wrong state to use initial direction");
+			return null;
 		}
 	}
 
@@ -501,12 +553,12 @@ public class SnakeGame extends JFrame {
 	 * @return
 	 */
 	private GameState generateNeighbor(GameState state, Direction dir){
-		 System.out.println("Generate neighbor of: "+state.x+", "+state.y+" Direction: "+dir);
+//		 System.out.println("Generate neighbor of: "+state.x+", "+state.y+" Direction: "+dir);
 		GameState neighbor = new GameState(state, state.moves + 1, state.priority);
 		Point head = new Point(neighbor.snake.peekFirst());
-		System.out.println("head: "+head.x+", "+head.y);
+//		System.out.println("head: "+head.x+", "+head.y);
 		if(head.x != state.x || head.y != state.y){
-			System.out.println("Inconsistent value");
+			System.err.println("Inconsistent value");
 		}
 		switch (dir){
 			case East:
@@ -530,7 +582,7 @@ public class SnakeGame extends JFrame {
 		neighbor.snake.removeLast();
 		// Calculate the new heuristic with the new head
 		neighbor.priority = neighbor.moves + getHeuristic(neighbor.snake);
-		System.out.println("Neighbor is: "+neighbor.x+", "+neighbor.y);
+//		System.out.println("Neighbor is: "+neighbor.x+", "+neighbor.y);
 		return neighbor;
 	}
 
@@ -583,6 +635,7 @@ public class SnakeGame extends JFrame {
 		 * where the snake's direction will change after a game over (though
 		 * it will not move).
 		 */
+		checkActionList(snake.peekFirst());
 		Direction direction = directions.peekFirst();
 				
 		/*
@@ -689,36 +742,14 @@ public class SnakeGame extends JFrame {
 		 */
 		board.clearBoard();
 		board.setTile(head, TileType.SnakeHead);
-		
-		/*
-		 * Clear the directions and add north as the
-		 * default direction.
-		 */
-		directions.clear();
-		int randInt = random.nextInt(4);
-		switch (randInt){
-			case 0:
-				directions.add(Direction.North);
-				break;
-			case 1:
-				directions.add(Direction.South);
-				break;
-			case 2:
-				directions.add(Direction.East);
-				break;
-			case 3:
-				directions.add(Direction.West);
-				break;
-            default:
-            	break;
-		}
 
-		
 		/*
 		 * Reset the logic timer.
 		 */
 		logicTimer.reset();
-		
+
+
+
 		/*
 		 * Spawn a new fruit.
 		 */
@@ -761,6 +792,8 @@ public class SnakeGame extends JFrame {
 	 * Spawns a new fruit onto the board.
 	 */
 	private void spawnFruit() {
+
+
 		//Reset the moves for this fruit to 100.
 		this.nextFruitScore = 100;
 
@@ -793,6 +826,7 @@ public class SnakeGame extends JFrame {
 				}
 			}
 		}
+
 
 		// Use A Star to generate a path to the goal
 		AStar();
