@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ff78e393-f8de-4c81-ac73-3978da1f8b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SnakeGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SnakeGame.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -17,39 +18,45 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="301">
-              <caret line="461" column="58" selection-start-line="461" selection-start-column="58" selection-end-line="461" selection-end-column="58" />
+            <state relative-caret-position="173">
+              <caret line="765" column="10" selection-start-line="765" selection-start-column="10" selection-end-line="765" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#GameState#2;class#GameState#0;class#SnakeGame#0" />
-                <element signature="docComment;field#MIN_SNAKE_LENGTH#0;class#SnakeGame#0" />
-                <element signature="docComment;field#MAX_DIRECTIONS#0;class#SnakeGame#0" />
-                <element signature="docComment;field#board#0;class#SnakeGame#0" />
-                <element signature="docComment;field#side#0;class#SnakeGame#0" />
-                <element signature="docComment;field#random#0;class#SnakeGame#0" />
-                <element signature="docComment;field#logicTimer#0;class#SnakeGame#0" />
-                <element signature="docComment;field#isNewGame#0;class#SnakeGame#0" />
-                <element signature="docComment;field#isGameOver#0;class#SnakeGame#0" />
-                <element signature="docComment;field#isPaused#0;class#SnakeGame#0" />
-                <element signature="docComment;field#snake#0;class#SnakeGame#0" />
-                <element signature="docComment;field#directions#0;class#SnakeGame#0" />
-                <element signature="docComment;field#score#0;class#SnakeGame#0" />
-                <element signature="docComment;field#fruitsEaten#0;class#SnakeGame#0" />
-                <element signature="docComment;field#nextFruitScore#0;class#SnakeGame#0" />
-                <element signature="docComment;field#fruitX#0;class#SnakeGame#0" />
-                <element signature="docComment;field#fruitY#0;class#SnakeGame#0" />
-                <element signature="docComment;method#SnakeGame#0;class#SnakeGame#0" />
-                <element signature="docComment;method#resetGame#0;class#SnakeGame#0" />
-                <element signature="docComment;method#isNewGame#0;class#SnakeGame#0" />
-                <element signature="e#17132#17133#0" expanded="true" />
-                <element signature="docComment;method#isGameOver#0;class#SnakeGame#0" />
-                <element signature="e#17297#17298#0" expanded="true" />
-                <element signature="docComment;method#isPaused#0;class#SnakeGame#0" />
-                <element signature="e#17457#17458#0" expanded="true" />
-                <element signature="e#19040#19041#0" expanded="true" />
-                <element signature="e#19175#19176#0" expanded="true" />
-                <element signature="e#19314#19315#0" expanded="true" />
-                <element signature="e#19472#19473#0" expanded="true" />
+                <element signature="e#1681#1850#0" />
+                <element signature="e#1902#1998#0" />
+                <element signature="e#2048#2085#0" />
+                <element signature="e#2116#2152#0" />
+                <element signature="e#2181#2249#0" />
+                <element signature="e#2277#2337#0" />
+                <element signature="e#2368#2421#0" />
+                <element signature="e#2454#2499#0" />
+                <element signature="e#2532#2580#0" />
+                <element signature="e#2611#2672#0" />
+                <element signature="e#2710#2768#0" />
+                <element signature="e#2815#2846#0" />
+                <element signature="e#2870#2921#0" />
+                <element signature="e#2951#3019#0" />
+                <element signature="e#3051#3087#0" />
+                <element signature="e#3111#3147#0" />
+                <element signature="e#3233#3339#0" />
+                <element signature="e#15927#16014#0" />
+                <element signature="e#17242#17355#0" />
+                <element signature="e#17384#17385#0" expanded="true" />
+                <element signature="e#17407#17408#0" expanded="true" />
+                <element signature="e#17412#17518#0" />
+                <element signature="e#17548#17549#0" expanded="true" />
+                <element signature="e#17572#17573#0" expanded="true" />
+                <element signature="e#17577#17682#0" />
+                <element signature="e#17710#17711#0" expanded="true" />
+                <element signature="e#17732#17733#0" expanded="true" />
+                <element signature="e#19296#19297#0" expanded="true" />
+                <element signature="e#19315#19316#0" expanded="true" />
+                <element signature="e#19425#19426#0" expanded="true" />
+                <element signature="e#19450#19451#0" expanded="true" />
+                <element signature="e#19561#19562#0" expanded="true" />
+                <element signature="e#19589#19590#0" expanded="true" />
+                <element signature="e#19716#19717#0" expanded="true" />
+                <element signature="e#19747#19748#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -129,10 +136,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1920" />
-    <option name="height" value="970" />
+    <option name="width" value="1440" />
+    <option name="height" value="793" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -140,8 +147,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -158,10 +163,12 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552287984974" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552288017828" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
@@ -236,10 +243,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="797" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="793" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.15808298" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.1602289" />
       <window_info id="Image Layers" order="1" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
@@ -247,7 +254,7 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.19248292" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.1911555" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.23373494" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -255,7 +262,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5005325" side_tool="true" weight="0.1373494" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.15831435" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.17653759" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.17546362" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -264,7 +271,7 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info active="true" anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.12589413" />
+      <window_info anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.1416309" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.16666667" />
@@ -302,39 +309,45 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="461" column="58" selection-start-line="461" selection-start-column="58" selection-end-line="461" selection-end-column="58" />
+        <state relative-caret-position="173">
+          <caret line="765" column="10" selection-start-line="765" selection-start-column="10" selection-end-line="765" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#GameState#2;class#GameState#0;class#SnakeGame#0" />
-            <element signature="docComment;field#MIN_SNAKE_LENGTH#0;class#SnakeGame#0" />
-            <element signature="docComment;field#MAX_DIRECTIONS#0;class#SnakeGame#0" />
-            <element signature="docComment;field#board#0;class#SnakeGame#0" />
-            <element signature="docComment;field#side#0;class#SnakeGame#0" />
-            <element signature="docComment;field#random#0;class#SnakeGame#0" />
-            <element signature="docComment;field#logicTimer#0;class#SnakeGame#0" />
-            <element signature="docComment;field#isNewGame#0;class#SnakeGame#0" />
-            <element signature="docComment;field#isGameOver#0;class#SnakeGame#0" />
-            <element signature="docComment;field#isPaused#0;class#SnakeGame#0" />
-            <element signature="docComment;field#snake#0;class#SnakeGame#0" />
-            <element signature="docComment;field#directions#0;class#SnakeGame#0" />
-            <element signature="docComment;field#score#0;class#SnakeGame#0" />
-            <element signature="docComment;field#fruitsEaten#0;class#SnakeGame#0" />
-            <element signature="docComment;field#nextFruitScore#0;class#SnakeGame#0" />
-            <element signature="docComment;field#fruitX#0;class#SnakeGame#0" />
-            <element signature="docComment;field#fruitY#0;class#SnakeGame#0" />
-            <element signature="docComment;method#SnakeGame#0;class#SnakeGame#0" />
-            <element signature="docComment;method#resetGame#0;class#SnakeGame#0" />
-            <element signature="docComment;method#isNewGame#0;class#SnakeGame#0" />
-            <element signature="e#17132#17133#0" expanded="true" />
-            <element signature="docComment;method#isGameOver#0;class#SnakeGame#0" />
-            <element signature="e#17297#17298#0" expanded="true" />
-            <element signature="docComment;method#isPaused#0;class#SnakeGame#0" />
-            <element signature="e#17457#17458#0" expanded="true" />
-            <element signature="e#19040#19041#0" expanded="true" />
-            <element signature="e#19175#19176#0" expanded="true" />
-            <element signature="e#19314#19315#0" expanded="true" />
-            <element signature="e#19472#19473#0" expanded="true" />
+            <element signature="e#1681#1850#0" />
+            <element signature="e#1902#1998#0" />
+            <element signature="e#2048#2085#0" />
+            <element signature="e#2116#2152#0" />
+            <element signature="e#2181#2249#0" />
+            <element signature="e#2277#2337#0" />
+            <element signature="e#2368#2421#0" />
+            <element signature="e#2454#2499#0" />
+            <element signature="e#2532#2580#0" />
+            <element signature="e#2611#2672#0" />
+            <element signature="e#2710#2768#0" />
+            <element signature="e#2815#2846#0" />
+            <element signature="e#2870#2921#0" />
+            <element signature="e#2951#3019#0" />
+            <element signature="e#3051#3087#0" />
+            <element signature="e#3111#3147#0" />
+            <element signature="e#3233#3339#0" />
+            <element signature="e#15927#16014#0" />
+            <element signature="e#17242#17355#0" />
+            <element signature="e#17384#17385#0" expanded="true" />
+            <element signature="e#17407#17408#0" expanded="true" />
+            <element signature="e#17412#17518#0" />
+            <element signature="e#17548#17549#0" expanded="true" />
+            <element signature="e#17572#17573#0" expanded="true" />
+            <element signature="e#17577#17682#0" />
+            <element signature="e#17710#17711#0" expanded="true" />
+            <element signature="e#17732#17733#0" expanded="true" />
+            <element signature="e#19296#19297#0" expanded="true" />
+            <element signature="e#19315#19316#0" expanded="true" />
+            <element signature="e#19425#19426#0" expanded="true" />
+            <element signature="e#19450#19451#0" expanded="true" />
+            <element signature="e#19561#19562#0" expanded="true" />
+            <element signature="e#19589#19590#0" expanded="true" />
+            <element signature="e#19716#19717#0" expanded="true" />
+            <element signature="e#19747#19748#0" expanded="true" />
           </folding>
         </state>
       </provider>

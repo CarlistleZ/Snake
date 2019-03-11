@@ -335,6 +335,7 @@ public class SnakeGame extends JFrame {
 					goSouth();
 					break;
 			}
+			directionMap.remove(checkSum);
 		}
 	}
 
@@ -479,13 +480,7 @@ public class SnakeGame extends JFrame {
 	 * @return
 	 */
 	private GameState generateNeighbor(GameState state, Direction dir){
-		GameState neighbor = new GameState();
-		neighbor.parent = state;
-		neighbor.moves = state.moves + 1;
-		neighbor.board = state.board;
-		neighbor.directions = state.directions;
-		neighbor.directions.add(dir);
-		neighbor.snake = state.snake;
+		GameState neighbor = new GameState(state, state.moves + 1, state.priority);
 		Point head = neighbor.snake.peekFirst();
 		switch (dir){
 			case East:
@@ -502,6 +497,7 @@ public class SnakeGame extends JFrame {
 				break;
 		}
 		neighbor.snake.addLast(head);
+		// Calculate the new heuristic with the new head
 		neighbor.priority = state.priority + 1 + getHeuristic(neighbor.snake);
 		return neighbor;
 	}
@@ -767,7 +763,7 @@ public class SnakeGame extends JFrame {
 		}
 
 		// Use A Star to generate a path to the goal
-		AStar();
+		//AStar();
 	}
 	
 	/**
