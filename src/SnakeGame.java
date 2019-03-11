@@ -450,64 +450,60 @@ public class SnakeGame extends JFrame {
 		Direction last = state.directions.peekLast();
 		if(last == Direction.East || last == Direction.West) {
 			// Turn West
-			GameState leftNeighbor = new GameState();
-			leftNeighbor.parent = state;
-			leftNeighbor.moves = state.moves + 1;
-			leftNeighbor.board = state.board;
-			leftNeighbor.directions = state.directions;
-			leftNeighbor.directions.add(Direction.West);
-			leftNeighbor.snake = state.snake;
-			Point leftHead = leftNeighbor.snake.peekFirst();
-			leftHead.x--;
-			leftNeighbor.snake.addLast(leftHead);
-			leftNeighbor.priority = state.priority + 1 + getHeuristic(leftNeighbor.snake);
-			res.add(leftNeighbor);
+			res.add(generateNeighbor(state, Direction.West));
 			// Turn East
-			GameState rightNeighbor = new GameState();
-			rightNeighbor.parent = state;
-			rightNeighbor.moves = state.moves + 1;
-			rightNeighbor.board = state.board;
-			rightNeighbor.directions = state.directions;
-			rightNeighbor.directions.add(Direction.East);
-			rightNeighbor.snake = state.snake;
-			Point rightHead = rightNeighbor.snake.peekFirst();
-			rightHead.x++;
-			rightNeighbor.snake.addLast(rightHead);
-			rightNeighbor.priority = state.priority + 1 + getHeuristic(rightNeighbor.snake);
-			res.add(rightNeighbor);
-			// TODO
+			res.add(generateNeighbor(state, Direction.East));
 			// Go straight
+			if(last == Direction.East)
+				res.add(generateNeighbor(state, Direction.West));
+			else
+				res.add(generateNeighbor(state, Direction.East));
 		}else {
 			// Turn South
-			GameState upNeighbor = new GameState();
-			upNeighbor.parent = state;
-			upNeighbor.moves = state.moves + 1;
-			upNeighbor.board = state.board;
-			upNeighbor.directions = state.directions;
-			upNeighbor.directions.add(Direction.North);
-			upNeighbor.snake = state.snake;
-			Point upHead = upNeighbor.snake.peekFirst();
-			upHead.y--;
-			upNeighbor.snake.addLast(upHead);
-			upNeighbor.priority = state.priority + 1 + getHeuristic(upNeighbor.snake);
-			res.add(upNeighbor);
-			// Turn East
-			GameState downNeighbor = new GameState();
-			downNeighbor.parent = state;
-			downNeighbor.moves = state.moves + 1;
-			downNeighbor.board = state.board;
-			downNeighbor.directions = state.directions;
-			downNeighbor.directions.add(Direction.South);
-			downNeighbor.snake = state.snake;
-			Point downHead = downNeighbor.snake.peekFirst();
-			downHead.y++;
-			downNeighbor.snake.addLast(downHead);
-			downNeighbor.priority = state.priority + 1 + getHeuristic(downNeighbor.snake);
-			res.add(downNeighbor);
-			// TODO
+			res.add(generateNeighbor(state, Direction.South));
+			// Turn North
+			res.add(generateNeighbor(state, Direction.North));
 			// Go straight
+			if(last == Direction.South)
+				res.add(generateNeighbor(state, Direction.North));
+			else
+				res.add(generateNeighbor(state, Direction.South));
 		}
 		return res;
+	}
+
+	/**
+	 * Generates a neighbor gamestate according to the indicated direction
+	 * @param state The gamestate from which we generate
+	 * @param dir direction of the neighbor wrt the state
+	 * @return
+	 */
+	private GameState generateNeighbor(GameState state, Direction dir){
+		GameState neighbor = new GameState();
+		neighbor.parent = state;
+		neighbor.moves = state.moves + 1;
+		neighbor.board = state.board;
+		neighbor.directions = state.directions;
+		neighbor.directions.add(dir);
+		neighbor.snake = state.snake;
+		Point head = neighbor.snake.peekFirst();
+		switch (dir){
+			case East:
+				head.x++;
+				break;
+			case West:
+				head.x--;
+				break;
+			case South:
+				head.y++;
+				break;
+			case North:
+				head.x--;
+				break;
+		}
+		neighbor.snake.addLast(head);
+		neighbor.priority = state.priority + 1 + getHeuristic(neighbor.snake);
+		return neighbor;
 	}
 
 	/**
