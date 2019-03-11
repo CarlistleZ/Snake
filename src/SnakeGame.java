@@ -15,7 +15,6 @@ public class SnakeGame extends JFrame {
 
 		GameState parent;
 		LinkedList<Point> snake;
-		LinkedList<Direction> directions;
 		BoardPanel board;
 		int moves;
 		int priority;
@@ -24,8 +23,9 @@ public class SnakeGame extends JFrame {
 		// Generate a state from a game
 		GameState(SnakeGame snakeGame, int moves, int priority){
 			board = snakeGame.board;
-			snake = new LinkedList<>(snakeGame.snake);
-			directions = new LinkedList<>(snakeGame.directions);
+			// snake = new LinkedList<>(snakeGame.snake);
+			snake = new LinkedList<>();
+			snake = (LinkedList<Point>) snakeGame.snake.clone();
 			this.moves = moves;
 			this.parent = null;
 			this.priority = priority;
@@ -35,8 +35,9 @@ public class SnakeGame extends JFrame {
 		// Generate a state from a parent state
 		GameState(GameState parent, int moves, int priority){
 			board = parent.board;
-			snake = new LinkedList<>(parent.snake);
-			directions = new LinkedList<>(parent.directions);
+			// snake = new LinkedList<>(snakeGame.snake);
+			snake = new LinkedList<>();
+			snake = (LinkedList<Point>) parent.snake.clone();
 			this.moves = moves;
 			this.parent = parent;
 			this.priority = priority;
@@ -47,7 +48,6 @@ public class SnakeGame extends JFrame {
 		GameState(){
 			parent = null;
 			snake = null;
-			directions = null;
 			board = null;
 			moves = Integer.MIN_VALUE;
 			priority = Integer.MIN_VALUE;
@@ -58,9 +58,9 @@ public class SnakeGame extends JFrame {
 		@Override
 		public int compareTo(GameState that) {
 			if (this.priority < that.priority)
-				return -1;
-			if (this.priority > that.priority)
 				return 1;
+			if (this.priority > that.priority)
+				return -1;
 			return 0;
 		}
 	}
@@ -321,7 +321,10 @@ public class SnakeGame extends JFrame {
 		// TODO
 		int checkSum = head.x * BoardPanel.COL_COUNT + head.y;
 		if (directionMap.containsKey(checkSum)){
-			switch (directionMap.get(checkSum)){
+			Direction dir = directionMap.get(checkSum);
+			if(dir == null)
+				return;
+			switch (dir){
 				case East:
 					goEast();
 					break;
@@ -401,17 +404,19 @@ public class SnakeGame extends JFrame {
 	 */
 	private void AStar() {
 		// TODO
+
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
 		queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
-		//System.out.println(snake.size());
+
 		boolean visitedArr[][] = new boolean[board.getHeight()][board.getWidth()];
 		for(int i = 0; i < visitedArr.length; i++){
 			for(int j = 0; j < visitedArr[0].length; j++){
 				visitedArr[i][j] = false;
 			}
 		}
-		while (!isGoal(currentState.snake)) {
+		while (true) {
+//			System.out.println("***AStar looking at: "+currentState.x+", "+currentState.y);
 			if(visitedArr[currentState.x][currentState.y]){
 				// Continues if this state has been visited
 				currentState = queue.poll();
@@ -420,18 +425,26 @@ public class SnakeGame extends JFrame {
 			visitedArr[currentState.x][currentState.y] = true;
 			for (GameState neighborState : neighbors(currentState)){
 				Point snakeHead = neighborState.snake.peekFirst();
-				if(snakeHead.x < 0 || snakeHead.x >= BoardPanel.COL_COUNT || snakeHead.y < 0 || snakeHead.y >= BoardPanel.ROW_COUNT){}
-				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody)
+				if(snakeHead.x < 0 || snakeHead.x >= BoardPanel.COL_COUNT || snakeHead.y < 0 || snakeHead.y >= BoardPanel.ROW_COUNT){
+					// Out of board, do nothing
+				}
+				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody) {
 					visitedArr[snakeHead.x][snakeHead.y] = true;
-				else
+//					System.out.println("Already visited: "+snakeHead.x+"," +snakeHead.y);
+				}else if(!visitedArr[neighborState.x][neighborState.y]){
 					queue.add(neighborState);
+//					 System.out.println("Added neighbor of :(" + currentState.x +", "+currentState.y+"): ");
+//					 System.out.println("\t\tneighbor: (" + neighborState.x +", "+neighborState.y+"): ");
+				}
 			}
-			if(queue.size()!=0){
+			if(!queue.isEmpty())
 				currentState = queue.poll();
+			else{
+				System.err.println("Queue is empty!!!");
+				break;
 			}
-			if(currentState==null){
-				System.out.println("Current state is null");
-			}
+			if(isGoal(currentState.snake))
+				break;
 		}
 		// Construct path from states
 		// TODO
@@ -439,12 +452,35 @@ public class SnakeGame extends JFrame {
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
 			Point head = currentState.snake.peekFirst();
-			directionMap.put(head.x * BoardPanel.COL_COUNT + head.y, currentState.directions.peekLast());
+			directionMap.put(head.x * BoardPanel.COL_COUNT + head.y, getStateDirection(currentState));
 			currentState = currentState.parent;
 		}
 		directionMap.put(currentState.snake.peekFirst().x * BoardPanel.COL_COUNT +
-				currentState.snake.peekFirst().y, currentState.directions.peekLast());
+				currentState.snake.peekFirst().y, getStateDirection(currentState));
 
+	}
+	private Direction getStateDirection(GameState state){
+		if(state.parent == null)
+			return null;
+		else{
+			int myX, myY, parentX, parentY;
+			myX = state.x;
+			myY = state.y;
+			parentX = state.parent.x;
+			parentY = state.parent.y;
+			if(myX == parentX + 1)
+				return Direction.East;
+			else if(myX == parentX - 1)
+				return Direction.West;
+			else if(myY == parentY + 1)
+				return Direction.South;
+			else if(myY == parentY -1)
+				return Direction.North;
+			else{
+				System.err.println("Error in state!");
+				return null;
+			}
+		}
 	}
 
 	public LinkedList<GameState> neighbors (GameState state) {
@@ -465,25 +501,36 @@ public class SnakeGame extends JFrame {
 	 * @return
 	 */
 	private GameState generateNeighbor(GameState state, Direction dir){
+		 System.out.println("Generate neighbor of: "+state.x+", "+state.y+" Direction: "+dir);
 		GameState neighbor = new GameState(state, state.moves + 1, state.priority);
-		Point head = neighbor.snake.peekFirst();
+		Point head = new Point(neighbor.snake.peekFirst());
+		System.out.println("head: "+head.x+", "+head.y);
+		if(head.x != state.x || head.y != state.y){
+			System.out.println("Inconsistent value");
+		}
 		switch (dir){
 			case East:
 				head.x++;
+				neighbor.x++;
 				break;
 			case West:
 				head.x--;
+				neighbor.x--;
 				break;
 			case South:
 				head.y++;
+				neighbor.y++;
 				break;
 			case North:
 				head.y--;
+				neighbor.y--;
 				break;
 		}
 		neighbor.snake.addFirst(head);
+		neighbor.snake.removeLast();
 		// Calculate the new heuristic with the new head
 		neighbor.priority = neighbor.moves + getHeuristic(neighbor.snake);
+		System.out.println("Neighbor is: "+neighbor.x+", "+neighbor.y);
 		return neighbor;
 	}
 
