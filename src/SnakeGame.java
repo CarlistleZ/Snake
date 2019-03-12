@@ -408,7 +408,7 @@ public class SnakeGame extends JFrame {
 		queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
 		System.out.println("Initial position: " + currentState.x+", "+currentState.y);
-		int secondLastX = 0, secondLastY = 0;
+//		int secondLastX = 0, secondLastY = 0;
 		boolean visitedArr[][] = new boolean[board.getHeight()][board.getWidth()];
 		for(int i = 0; i < visitedArr.length; i++){
 			for(int j = 0; j < visitedArr[0].length; j++){
@@ -416,7 +416,6 @@ public class SnakeGame extends JFrame {
 			}
 		}
 		while (true) {
-//			System.out.println("***AStar looking at: "+currentState.x+", "+currentState.y);
 			if(visitedArr[currentState.x][currentState.y]){
 				// Continues if this state has been visited
 				currentState = queue.poll();
@@ -430,12 +429,8 @@ public class SnakeGame extends JFrame {
 				}
 				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody) {
 					visitedArr[snakeHead.x][snakeHead.y] = true;
-//					System.out.println("Already visited: "+snakeHead.x+"," +snakeHead.y);
-				}else if(!visitedArr[neighborState.x][neighborState.y]){
+				}else if(!visitedArr[neighborState.x][neighborState.y])
 					queue.add(neighborState);
-//					 System.out.println("Added neighbor of :(" + currentState.x +", "+currentState.y+"): ");
-//					 System.out.println("\t\tneighbor: (" + neighborState.x +", "+neighborState.y+"): ");
-				}
 			}
 			if(!queue.isEmpty())
 				currentState = queue.poll();
@@ -448,10 +443,15 @@ public class SnakeGame extends JFrame {
 				break;
 			}
 		}
+		generatePathFromState(currentState);
+	}
+
+	private void generatePathFromState(GameState currentState){
 		// Construct path from states
 		// Generate an action list: a list of directions at (x, y)
 
 		 //Clear the directions
+		int secondLastX = 0, secondLastY = 0;
 		directions.clear();
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
@@ -464,28 +464,61 @@ public class SnakeGame extends JFrame {
 			currentState = currentState.parent;
 		}
 		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
-
-//		int randInt = random.nextInt(4);
-//		switch (randInt){
-//			case 0:
-//				directions.add(Direction.North);
-//				break;
-//			case 1:
-//				directions.add(Direction.South);
-//				break;
-//			case 2:
-//				directions.add(Direction.East);
-//				break;
-//			case 3:
-//				directions.add(Direction.West);
-//				break;
-//			default:
-//				break;
-//		}
 		directions.add(getInitialStateDirection(secondLastX, secondLastY));
+	}
 
+	private void idAStar() {
+		GameState currentState = new GameState(this, 0, getHeuristic(snake));
+		int secondLastX = 0, secondLastY = 0;
 
+		int fValueLimit = getHeuristic(currentState.snake) + 2;
+		int fValueLimitMax = BoardPanel.COL_COUNT + BoardPanel.ROW_COUNT + 2;
+		// Iterative deepening loop
+		while (fValueLimit <= fValueLimitMax){
+			GameState gs = idAStar(currentState, fValueLimit);
+			if(gs != null){
 
+			}else {
+				fValueLimit += 2;
+			}
+		}
+
+		directions.clear();
+		directionMap = new HashMap<>();
+		while (currentState.parent != null){
+			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
+			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+"\tshould go "+getStateDirection(currentState));
+			if(currentState.parent.parent == null){
+				secondLastX = currentState.x;
+				secondLastY = currentState.y;
+			}
+			currentState = currentState.parent;
+		}
+		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
+		directions.add(getInitialStateDirection(secondLastX, secondLastY));
+	}
+
+	/**
+	 * Generates a solution state from a gamestate and a ID limit
+	 * @param currentState the state to analyze
+	 * @param limit  the limit of iterative deepening
+	 * @return the game state which can lead to the fruit
+	 *         null if current state passes the limit or no possible path under the current state
+	 */
+	private GameState idAStar(GameState currentState, int limit){
+		if(isGoal(currentState.snake)){
+			return currentState;
+		}
+		for (GameState neighbor: neighbors(currentState)){
+			if(getHeuristic(neighbor.snake) <= limit){
+				continue;
+			}
+			GameState gs = idAStar(neighbor,limit);
+			if(gs != null){
+				return new GameState(currentState, 0, 0);
+			}
+		}
+		return null;
 	}
 
 	private Direction getStateDirection(GameState state){
