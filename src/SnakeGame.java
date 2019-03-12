@@ -318,7 +318,6 @@ public class SnakeGame extends JFrame {
 	 * @param head head of the snake to check
 	 */
 	private void checkActionList(Point head){
-		// TODO
 		int checkSum = head.x + BoardPanel.COL_COUNT * head.y;
 		if (directionMap.containsKey(checkSum)){
 			Direction dir = directionMap.get(checkSum);
@@ -338,14 +337,15 @@ public class SnakeGame extends JFrame {
 					directions.addLast(Direction.South);
 					break;
 			}
+			System.out.println("I'm at: " + head.x +", "+head.y+" , going: "+directions.peekLast());
 			directionMap.remove(checkSum);
 		}
 	}
 
 	/**
-	 * Starts the game running.
+	 * Starts the game running in player mode with actions.
 	 */
-	private void startGame() {
+	private void startGamePlayer() {
 		/*
 		 * Initialize everything we're going to be using.
 		 */
@@ -404,14 +404,6 @@ public class SnakeGame extends JFrame {
 	 */
 	private void AStar() {
 
-		/*
-		 * Clear the directions
-		 */
-		directions.clear();
-
-
-		// TODO
-		System.out.println("Direction size: " + directions.size());
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
 		queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
@@ -452,13 +444,15 @@ public class SnakeGame extends JFrame {
 				break;
 			}
 			if(isGoal(currentState.snake)) {
-				System.out.println("GOALLLLLL FOUND!!!!\t\t Fruit: "+fruitX+", "+fruitY);
+				System.out.println("Goal: "+fruitX+", "+fruitY);
 				break;
 			}
 		}
 		// Construct path from states
-		// TODO
 		// Generate an action list: a list of directions at (x, y)
+
+		 //Clear the directions
+		directions.clear();
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
 			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
@@ -467,7 +461,6 @@ public class SnakeGame extends JFrame {
 				secondLastX = currentState.x;
 				secondLastY = currentState.y;
 			}
-
 			currentState = currentState.parent;
 		}
 		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
@@ -494,6 +487,7 @@ public class SnakeGame extends JFrame {
 
 
 	}
+
 	private Direction getStateDirection(GameState state){
 		if(state.parent == null)
 			return null;
@@ -526,9 +520,9 @@ public class SnakeGame extends JFrame {
 			return Direction.East;
 		else if(secondToLastX == midX - 1)
 			return Direction.West;
-		else if(secondToLastY == midY - 1)
+		else if(secondToLastY == midY + 1)
 			return Direction.South;
-		else if(secondToLastY == midY +1)
+		else if(secondToLastY == midY - 1)
 			return Direction.North;
 		else{
 			System.err.println("Error: wrong state to use initial direction");
@@ -636,6 +630,8 @@ public class SnakeGame extends JFrame {
 		 * where the snake's direction will change after a game over (though
 		 * it will not move).
 		 */
+		if(directions.isEmpty())
+			return null;
 
 		Direction direction = directions.peekFirst();
 				
@@ -661,6 +657,8 @@ public class SnakeGame extends JFrame {
 			head.x++;
 			break;
 		}
+
+		System.out.println("Updated: "+head.x+ ", "+head.y);
 		
 		/*
 		 * If the snake has moved out of bounds ('hit' a wall), we can just
@@ -868,7 +866,7 @@ public class SnakeGame extends JFrame {
 
 	public static void main(String[] args) {
 		SnakeGame snake = new SnakeGame();
-		snake.startGame();
+		snake.startGamePlayer();
 	}
 
 }

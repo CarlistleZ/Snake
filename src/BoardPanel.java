@@ -17,13 +17,13 @@ public class BoardPanel extends JPanel {
 	 * The number of columns on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int COL_COUNT = 25;
+	public static final int COL_COUNT = 15;
 	
 	/**
 	 * The number of rows on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int ROW_COUNT = 25;
+	public static final int ROW_COUNT = 15;
 	
 	/**
 	 * The size of each tile in pixels.
@@ -257,7 +257,10 @@ public class BoardPanel extends JPanel {
 			 * directions.
 			 * 
 			 */
-			switch(game.getDirection()) {
+			Direction dir = game.getDirection();
+			if(dir == null)
+				System.err.println("Error: can't get direction form game");
+			switch(dir) {
 			case North: {
 				int baseY = y + EYE_SMALL_INSET;
 				g.drawLine(x + EYE_LARGE_INSET, baseY, x + EYE_LARGE_INSET, baseY + EYE_LENGTH);
