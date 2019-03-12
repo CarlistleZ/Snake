@@ -258,8 +258,10 @@ public class BoardPanel extends JPanel {
 			 * 
 			 */
 			Direction dir = game.getDirection();
-			if(dir == null)
+			if(dir == null){
 				System.err.println("Error: can't get direction form game");
+				return;
+			}
 			switch(dir) {
 			case North: {
 				int baseY = y + EYE_SMALL_INSET;

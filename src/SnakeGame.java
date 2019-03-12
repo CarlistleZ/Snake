@@ -337,7 +337,7 @@ public class SnakeGame extends JFrame {
 					directions.addLast(Direction.South);
 					break;
 			}
-			System.out.println("I'm at: " + head.x +", "+head.y+" , going: "+directions.peekLast());
+			System.out.println("I'm at: " + head.x +", "+head.y+"\tgoing: "+directions.peekLast());
 			directionMap.remove(checkSum);
 		}
 	}
@@ -456,7 +456,7 @@ public class SnakeGame extends JFrame {
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
 			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
-			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+" should go "+getStateDirection(currentState));
+			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+"\tshould go "+getStateDirection(currentState));
 			if(currentState.parent.parent == null){
 				secondLastX = currentState.x;
 				secondLastY = currentState.y;
@@ -634,7 +634,6 @@ public class SnakeGame extends JFrame {
 			return null;
 
 		Direction direction = directions.peekFirst();
-				
 		/*
 		 * Here we calculate the new point that the snake's head will be at
 		 * after the update.
@@ -657,8 +656,6 @@ public class SnakeGame extends JFrame {
 			head.x++;
 			break;
 		}
-
-		System.out.println("Updated: "+head.x+ ", "+head.y);
 		
 		/*
 		 * If the snake has moved out of bounds ('hit' a wall), we can just
