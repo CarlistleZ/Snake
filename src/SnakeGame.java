@@ -58,9 +58,9 @@ public class SnakeGame extends JFrame {
 		@Override
 		public int compareTo(GameState that) {
 			if (this.priority < that.priority)
-				return 1;
-			if (this.priority > that.priority)
 				return -1;
+			if (this.priority > that.priority)
+				return 1;
 			return 0;
 		}
 	}
@@ -374,9 +374,10 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
+				checkActionList(snake.peekFirst());
 				updateGame();
 			}
-
+			// checkActionList(snake.peekFirst());
 			//Repaint the board and side panel with the new content.
 			board.repaint();
 			side.repaint();
@@ -635,7 +636,7 @@ public class SnakeGame extends JFrame {
 		 * where the snake's direction will change after a game over (though
 		 * it will not move).
 		 */
-		checkActionList(snake.peekFirst());
+
 		Direction direction = directions.peekFirst();
 				
 		/*
