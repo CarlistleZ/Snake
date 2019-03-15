@@ -353,6 +353,7 @@ public class SnakeGame extends JFrame {
 			Direction dir = directionMap.get(checkSum);
 			if(dir == null)
 				return;
+			directions.clear();
 			switch (dir){
 				case East:
 					directions.addLast(Direction.East);
@@ -382,7 +383,7 @@ public class SnakeGame extends JFrame {
 		this.random = new Random();
 		this.snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(7.0f);
+		this.logicTimer = new Clock(9.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 
@@ -489,7 +490,6 @@ public class SnakeGame extends JFrame {
 			currentState = currentState.parent;
 		}
 		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
-		directions.add(getInitialStateDirection(secondLastX, secondLastY));
 	}
 
 	private void idAStar() {
@@ -498,7 +498,7 @@ public class SnakeGame extends JFrame {
 		int fValueLimit = getHeuristic(currentState.snake) + 2;
 		//TODO Tune this param later!!!
 		final int maxSteps = 64;
-		final int maxLimit = BoardPanel.COL_COUNT + BoardPanel.ROW_COUNT + 200;
+		final int maxLimit = BoardPanel.COL_COUNT + BoardPanel.ROW_COUNT + maxSteps;
 		boolean foundCorrectly = false;
 
 		// Iterative deepening loop
@@ -512,7 +512,7 @@ public class SnakeGame extends JFrame {
 				break;
 			}else {
 				fValueLimit += 2;
-
+				System.out.println("Change to limit: " + fValueLimit);
 			}
 		}
 		if(foundCorrectly)
