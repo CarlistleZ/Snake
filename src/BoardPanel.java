@@ -259,7 +259,6 @@ public class BoardPanel extends JPanel {
 			 */
 			Direction dir = game.getDirection();
 			if(dir == null){
-				System.err.println("Error: can't get direction form game");
 				return;
 			}
 			switch(dir) {
