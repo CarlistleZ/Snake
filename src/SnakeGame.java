@@ -494,25 +494,26 @@ public class SnakeGame extends JFrame {
 
 	private void idAStar() {
 		GameState currentState = new GameState(this, 0, getHeuristic(snake));
+		// System.out.println("Initial: Snake: " + currentState + "\tFruit: (" + fruitX +", " + fruitY +")");
 		GameState state = null;
-		int fValueLimit = getHeuristic(currentState.snake) + 2;
-		//TODO Tune this param later!!!
-		final int maxSteps = 64;
+		int fValueLimit = getHeuristic(currentState.snake);
+		final int maxSteps = BoardPanel.COL_COUNT + BoardPanel.ROW_COUNT;
 		final int maxLimit = BoardPanel.COL_COUNT + BoardPanel.ROW_COUNT + maxSteps;
 		boolean foundCorrectly = false;
 
 		// Iterative deepening loop
 		while (fValueLimit <= maxLimit){
+			// System.out.println("Executing limit: " + fValueLimit);
 			initVisitedArr();
 			state = idAStar(currentState, fValueLimit);
 			if(state != null){
 				currentState = state;
-				System.out.println("Recursive method succeed at " + currentState.toString());
 				foundCorrectly = true;
+				// System.out.println("Found at limit: " + fValueLimit);
 				break;
 			}else {
-				fValueLimit += 2;
-				System.out.println("Change to limit: " + fValueLimit);
+				fValueLimit++;
+				// System.out.println("Changing to limit: " + fValueLimit);
 			}
 		}
 		if(foundCorrectly)
@@ -529,8 +530,9 @@ public class SnakeGame extends JFrame {
 	 *         null if current state passes the limit or no possible path under the current state
 	 */
 	private GameState idAStar(GameState currentState, int limit){
-		System.out.println("idAStar with depth: " + limit);
+		// System.out.println("idAStar with depth: " + limit);
 		if(isGoal(currentState.snake)){
+			// System.out.println("Found goal: " + currentState);
 			return currentState;
 		}
 		for (GameState neighbor: neighbors(currentState)){
@@ -539,12 +541,15 @@ public class SnakeGame extends JFrame {
 				continue;
 			}
 			visitedArr[neighbor.x][neighbor.y] = true;
-			GameState gs = idAStar(neighbor,limit);
+			// Explore the neighbor with decreased limit
+			GameState gs = idAStar(neighbor,limit - 1);
+			// game state is null if we found nothing under this state
 			if(gs != null){
-				return new GameState(currentState);
+				// Construct the result
+				return gs;
 			}
 		}
-		System.out.println("Returning null!!!!!!!");
+		// System.out.println("Returning null at level: " + limit);
 		return null;
 	}
 
@@ -634,6 +639,7 @@ public class SnakeGame extends JFrame {
 				break;
 		}
 		neighbor.snake.addFirst(head);
+		// Remove the old tail
 		neighbor.snake.removeLast();
 		// Calculate the new heuristic with the new head
 		neighbor.priority = neighbor.moves + getHeuristic(neighbor.snake);
@@ -885,7 +891,7 @@ public class SnakeGame extends JFrame {
 
 
 		// Use A Star to generate a path to the goal
-		AStar();
+		idAStar();
 	}
 	
 	/**
