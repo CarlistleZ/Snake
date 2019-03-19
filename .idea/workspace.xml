@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="ff78e393-f8de-4c81-ac73-3978da1f8b3a" name="Default Changelist" comment="Add gamestate, aStar todo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCTS.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$MCTSState.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$MCTSState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Node.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Node.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Tree.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Tree.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BoardPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BoardPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SnakeGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SnakeGame.java" afterDir="false" />
     </list>
@@ -22,14 +25,19 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="57">
-              <caret line="460" column="17" selection-start-line="460" selection-start-column="17" selection-end-line="460" selection-end-column="17" />
+            <state relative-caret-position="286">
+              <caret line="544" column="81" lean-forward="true" selection-start-line="544" selection-start-column="81" selection-end-line="544" selection-end-column="81" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#24807#24808#0" expanded="true" />
-                <element signature="e#24842#24843#0" expanded="true" />
+                <element signature="e#21977#21978#0" expanded="true" />
+                <element signature="e#22142#22143#0" expanded="true" />
+                <element signature="e#22302#22303#0" expanded="true" />
+                <element signature="e#23890#23891#0" expanded="true" />
+                <element signature="e#24025#24026#0" expanded="true" />
+                <element signature="e#24164#24165#0" expanded="true" />
+                <element signature="e#24322#24323#0" expanded="true" />
                 <element signature="e#24877#24878#0" expanded="true" />
-                <element signature="e#24901#24902#0" expanded="true" />
+                <element signature="e#24912#24913#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -38,8 +46,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="25" column="41" selection-start-line="25" selection-start-column="41" selection-end-line="25" selection-end-column="41" />
+            <state relative-caret-position="449">
+              <caret line="109" column="40" lean-forward="true" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2547#2548#0" expanded="true" />
@@ -111,6 +119,7 @@
       <find>&quot;, &quot;</find>
       <find>isGoal</find>
       <find>getC</find>
+      <find>body</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -125,8 +134,8 @@
         <option value="$PROJECT_DIR$/src/SidePanel.java" />
         <option value="$PROJECT_DIR$/src/Test.java" />
         <option value="$PROJECT_DIR$/src/test.java" />
-        <option value="$PROJECT_DIR$/src/SnakeGame.java" />
         <option value="$PROJECT_DIR$/src/BoardPanel.java" />
+        <option value="$PROJECT_DIR$/src/SnakeGame.java" />
       </list>
     </option>
   </component>
@@ -143,6 +152,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -159,8 +170,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -263,10 +272,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="797" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="797" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.1416309" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.14306152" />
       <window_info id="Image Layers" order="1" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
@@ -274,7 +283,7 @@
       <window_info id="Favorites" order="5" side_tool="true" weight="0.3297568" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
-      <window_info anchor="bottom" id="Debug" order="2" weight="0.13782384" />
+      <window_info anchor="bottom" id="Debug" order="2" weight="0.13758865" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Run" order="5" visible="true" weight="0.14751773" />
@@ -368,8 +377,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="25" column="41" selection-start-line="25" selection-start-column="41" selection-end-line="25" selection-end-column="41" />
+        <state relative-caret-position="449">
+          <caret line="109" column="40" lean-forward="true" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2547#2548#0" expanded="true" />
@@ -382,14 +391,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="460" column="17" selection-start-line="460" selection-start-column="17" selection-end-line="460" selection-end-column="17" />
+        <state relative-caret-position="286">
+          <caret line="544" column="81" lean-forward="true" selection-start-line="544" selection-start-column="81" selection-end-line="544" selection-end-column="81" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#24807#24808#0" expanded="true" />
-            <element signature="e#24842#24843#0" expanded="true" />
+            <element signature="e#21977#21978#0" expanded="true" />
+            <element signature="e#22142#22143#0" expanded="true" />
+            <element signature="e#22302#22303#0" expanded="true" />
+            <element signature="e#23890#23891#0" expanded="true" />
+            <element signature="e#24025#24026#0" expanded="true" />
+            <element signature="e#24164#24165#0" expanded="true" />
+            <element signature="e#24322#24323#0" expanded="true" />
             <element signature="e#24877#24878#0" expanded="true" />
-            <element signature="e#24901#24902#0" expanded="true" />
+            <element signature="e#24912#24913#0" expanded="true" />
           </folding>
         </state>
       </provider>
