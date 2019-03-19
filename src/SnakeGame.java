@@ -214,6 +214,7 @@ public class SnakeGame extends JFrame {
 				 * recent direction is adjacent to North before adding the
 				 * direction to the list.
 				 */
+
 				case KeyEvent.VK_W:
 				case KeyEvent.VK_UP:
 					goNorth();
@@ -225,7 +226,8 @@ public class SnakeGame extends JFrame {
 				 * Ensure that the direction list is not full, and that the most
 				 * recent direction is adjacent to South before adding the
 				 * direction to the list.
-				 */	
+				 */
+
 				case KeyEvent.VK_S:
 				case KeyEvent.VK_DOWN:
 					goSouth();
@@ -351,24 +353,40 @@ public class SnakeGame extends JFrame {
 		int checkSum = head.x + BoardPanel.COL_COUNT * head.y;
 		if (directionMap.containsKey(checkSum)){
 			Direction dir = directionMap.get(checkSum);
-			if(dir == null)
+
+            System.out.println("===CheckActionList is going to add a direction:===");
+            System.out.println(":::Before:::");
+            for(Direction d:directions){
+                System.out.println(d);
+            }
+            System.out.println("::::::::");
+
+			if(dir == null){
+			    System.out.println("######Im lost#######");
 				return;
+			}
+			directions.clear();
 			switch (dir){
 				case East:
+				    System.out.println("("+head.x+","+head.y+")==>EAST");
 					directions.addLast(Direction.East);
 					break;
 				case West:
+                    System.out.println("("+head.x+","+head.y+")==>WEST");
 					directions.addLast(Direction.West);
 					break;
 				case North:
+                    System.out.println("("+head.x+","+head.y+")==>NORTH");
 					directions.addLast(Direction.North);
 					break;
 				case South:
+                    System.out.println("("+head.x+","+head.y+")==>SOUTH");
 					directions.addLast(Direction.South);
 					break;
 			}
 			System.out.println("I'm at: " + head.x +", "+head.y+"\tgoing: "+directions.peekLast());
 			directionMap.remove(checkSum);
+            System.out.println("=====End of CheckActionList=====");
 		}
 	}
 
@@ -382,7 +400,7 @@ public class SnakeGame extends JFrame {
 		this.random = new Random();
 		this.snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(7.0f);
+		this.logicTimer = new Clock(2.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 
@@ -416,7 +434,7 @@ public class SnakeGame extends JFrame {
 			 * Calculate the delta time between since the start of the frame
 			 * and sleep for the excess time to cap the frame rate. While not
 			 * incredibly accurate, it is sufficient for our purposes.
-			 */
+
 			long delta = (System.nanoTime() - start) / 1000000L;
 			if(delta < FRAME_TIME) {
 				try {
@@ -424,7 +442,7 @@ public class SnakeGame extends JFrame {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 	}
 
@@ -435,11 +453,15 @@ public class SnakeGame extends JFrame {
 	private void AStar() {
 
 		PriorityQueue<GameState> queue = new PriorityQueue<>();
-		queue.add(new GameState(this, 0, getHeuristic(snake)));
+		while(queue.isEmpty()){
+            queue.add(new GameState(this, 0, getHeuristic(snake)));
+        }
+		//queue.add(new GameState(this, 0, getHeuristic(snake)));
 		GameState currentState = queue.poll();
 		System.out.println("Initial position: " + currentState.x+", "+currentState.y);
 		initVisitedArr();
 		while (true) {
+		    //System.out.println(currentState==null);
 			if(visitedArr[currentState.x][currentState.y]){
 				// Continues if this state has been visited
 				currentState = queue.poll();
@@ -489,8 +511,10 @@ public class SnakeGame extends JFrame {
 			currentState = currentState.parent;
 		}
 		directionMap.put(currentState.x + BoardPanel.COL_COUNT * currentState.y, getInitialStateDirection(secondLastX, secondLastY));
-		directions.add(getInitialStateDirection(secondLastX, secondLastY));
+		//directions.add(getInitialStateDirection(secondLastX, secondLastY));
 	}
+
+
 
 	private void idAStar() {
 		GameState currentState = new GameState(this, 0, getHeuristic(snake));
@@ -692,7 +716,9 @@ public class SnakeGame extends JFrame {
 		 */
 		if(directions.isEmpty())
 			return null;
-
+        for(Direction d:directions){
+            System.out.println(d);
+        }
 		Direction direction = directions.peekFirst();
 		/*
 		 * Here we calculate the new point that the snake's head will be at
@@ -757,9 +783,12 @@ public class SnakeGame extends JFrame {
 			board.setTile(snake.peekFirst(), TileType.SnakeBody);
 			snake.push(head);
 			board.setTile(head, TileType.SnakeHead);
-			if(directions.size() > 1) {
+
+
+
+			//if(directions.size() > 1) {
 				directions.poll();
-			}
+			//}
 		}
 				
 		return old;
