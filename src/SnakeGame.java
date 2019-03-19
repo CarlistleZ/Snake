@@ -11,7 +11,7 @@ import javax.swing.JFrame;
  */
 public class SnakeGame extends JFrame {
 
-	private static class GameState implements Comparable<GameState>{
+	public static class GameState implements Comparable<GameState>{
 
 		GameState parent;
 		LinkedList<Point> snake;
@@ -179,6 +179,19 @@ public class SnakeGame extends JFrame {
 	 * Reinitialize at the beginning of each independent search
 	 */
 	boolean visitedArr[][];
+
+	/**
+	 *
+	 */
+	public SnakeGame duplicate(){
+		try {
+			return (SnakeGame) this.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		System.err.println("Error duplicating SnakeGame");
+		return null;
+	}
 
 	/**
 	 * Creates a new SnakeGame instance. Creates a new window,
@@ -354,7 +367,7 @@ public class SnakeGame extends JFrame {
 		this.random = new Random();
 		this.snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(19.0f);
+		this.logicTimer = new Clock(13.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 
@@ -941,85 +954,10 @@ public class SnakeGame extends JFrame {
 
 
 	/**
+	 *  -------------------------------------------------------------------------------------------
 	 *  *****************************  Monte Carlo Tree Search (MCTS) *****************************
-	 */
-
-	public class MCTSState extends GameState{
-		// Number of game visited and won under this state
-		int visited, wins;
-		MCTSState(MCTSState parent){
-			// TODO
-			this(parent, 0);
-		}
-		MCTSState(MCTSState parent, int additionScore){
-			board = parent.board;
-			// snake = new LinkedList<>(snakeGame.snake);
-			snake = new LinkedList<>();
-			snake = (LinkedList<Point>) parent.snake.clone();
-			this.moves = 0;
-			this.parent = parent;
-			this.priority = 0;
-			x = snake.peekFirst().x;
-			y = snake.peekFirst().y;
-			this.visited = parent.visited + 1;
-			this.wins = parent.wins + additionScore;
-		}
-		MCTSState getPossibleStates(){
-			// TODO
-
-			return null;
-		}
-		public void randomPlay(){
-			// TODO
-		}
-
-		public List<MCTSState> getAllPossibleStates() {
-			// TODO
-			return null;
-		}
-	}
-
-	public class Node {
-		MCTSState state;
-		Node parent;
-		List<Node> childArr;
-
-		public Node(){
-			// TODO
-		}
-
-		public Node(Node that){
-			this.state = that.state;
-			this.parent = that.parent;
-			this.childArr = that.getChildArr();
-		}
-
-		public boolean hasFinished(){
-			return isGoal(state.snake);
-		}
-		public List<Node> getChildArr(){
-
-			return childArr;
-		}
-
-		public Node getRandomChildNode(){
-			// TODO
-			Random r = new Random();
-			int randomIndex = r.nextInt(childArr.size());
-			return childArr.get(randomIndex);
-		}
-
-		public int getEvaluation() {
-			// TODO
-			// get a value: 1 for win and -1 for lose
-			return -1;
-		}
-	}
-
-	public class Tree {
-		Node root;
-
-	}
+	 *  -------------------------------------------------------------------------------------------
+     */
 
 	public Direction MCTS(GameState gameState) {
 		// Initialize from a snake game state
@@ -1029,11 +967,11 @@ public class SnakeGame extends JFrame {
 
 		while(haveTimeLeft()){
 			Node promisingNode = selectPromisingNode(rootNode);
-			if(!promisingNode.hasFinished()){
+			if(!isGoal(promisingNode.state.snake)){
 				expandNode(promisingNode);
 			}
 			Node nodeToExplore = promisingNode;
-			if (promisingNode.getChildArr().size() > 0) {
+			if (promisingNode.childArray.size() > 0) {
 				nodeToExplore = promisingNode.getRandomChildNode();
 			}
 
@@ -1049,11 +987,11 @@ public class SnakeGame extends JFrame {
 		// TODO
 		Node tempNode = new Node(nodeToExplore);
 		int res = 0;
-		while(!tempNode.hasFinished()){
+		while(!isGoal(tempNode.state.snake)){
 			tempNode = tempNode.getRandomChildNode();
 		}
 		// Now tempNode is a terminal state
-		return tempNode.getEvaluation();
+		return (int)tempNode.state.winScore;
 	}
 
 	/**
@@ -1065,8 +1003,8 @@ public class SnakeGame extends JFrame {
 		// TODO
 		Node tempNode = nodeToExplore;
 		while (tempNode != null) {
-			tempNode.state.visited++;
-			tempNode.state.wins += playoutResult;
+			tempNode.state.visitCount++;
+			tempNode.state.winScore += playoutResult;
 			tempNode = tempNode.parent;
 		}
 	}
@@ -1077,12 +1015,12 @@ public class SnakeGame extends JFrame {
 	 */
 	private void expandNode(Node promisingNode) {
 		// TODO
-		List<MCTSState> possibleStates = promisingNode.state.getAllPossibleStates();
+		List<State> possibleStates = null;  // promisingNode.state.getAllPossibleStates();
 		possibleStates.forEach(state -> {
 			Node newNode = new Node(promisingNode);
 			newNode.parent = promisingNode;
 			// newNode.state.setPlayerNo(promisingNode.getState().getOpponent());
-			promisingNode.childArr.add(newNode);
+			promisingNode.childArray.add(newNode);
 		});
 	}
 
@@ -1107,4 +1045,5 @@ public class SnakeGame extends JFrame {
 		// TODO
 		return false;
 	}
+
 }

@@ -17,13 +17,13 @@ public class BoardPanel extends JPanel {
 	 * The number of columns on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int COL_COUNT = 25;
+	public static final int COL_COUNT = 15;
 	
 	/**
 	 * The number of rows on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int ROW_COUNT = 25;
+	public static final int ROW_COUNT = 15;
 	
 	/**
 	 * The size of each tile in pixels.
@@ -70,6 +70,16 @@ public class BoardPanel extends JPanel {
 		
 		setPreferredSize(new Dimension(COL_COUNT * TILE_SIZE, ROW_COUNT * TILE_SIZE));
 		setBackground(Color.BLACK);
+	}
+
+	public BoardPanel(BoardPanel board){
+		this.game = board.game.duplicate();
+		this.tiles = board.tiles.clone();
+	}
+
+	public BoardPanel(){
+
+		this((BoardPanel) null);
 	}
 	
 	/**
