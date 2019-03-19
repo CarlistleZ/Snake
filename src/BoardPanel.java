@@ -79,7 +79,6 @@ public class BoardPanel extends JPanel {
 
 	public BoardPanel(){
 
-		this((BoardPanel) null);
 	}
 	
 	/**
