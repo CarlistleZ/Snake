@@ -492,7 +492,7 @@ public class SnakeGame extends JFrame {
 				}
 				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody) {
 					visitedArr[snakeHead.x][snakeHead.y] = true;
-				}else if(!visitedArr[neighborState.x][neighborState.y])
+				}else if(!visitedArr[neighborState.x][neighborState.y]){
 					queue.add(neighborState);
 			}
 			if(!queue.isEmpty())
