@@ -546,6 +546,8 @@ public class SnakeGame extends JFrame {
 				continue;
 			}
 			visitedArr[neighbor.x][neighbor.y] = true;
+			if(board.getTile(neighbor.x, neighbor.y) == TileType.SnakeBody)
+				continue;
 			// Explore the neighbor with decreased limit
 			GameState gs = idAStar(neighbor,limit - 1);
 			// game state is null if we found nothing under this state
@@ -583,7 +585,6 @@ public class SnakeGame extends JFrame {
 	}
 
 	private Direction getInitialStateDirection(int secondToLastX, int secondToLastY, int lastX, int lastY){
-		System.out.println("2ndX:" +secondToLastX + " 2ndy: " + secondToLastY + " lastX: " + lastX + "lastY: " + lastY);
 		int  midX, midY;
 		midX = lastX;
 		midY = lastY;
