@@ -441,6 +441,15 @@ public class SnakeGame extends JFrame {
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
 			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
+			System.out.println("===Snake==info====");
+			for(Point p:currentState.snake){
+				System.out.print("("+p.x+","+p.y+") ");
+				System.out.println("");
+				System.out.print(currentState.board.getTile(p.x,p.y)+" ");
+				System.out.println("");
+			}
+			System.out.println("================" +
+					"");
 			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+"\tshould go "+getStateDirection(currentState));
 			if(currentState.parent.parent == null){
 				secondLastX = currentState.x;
@@ -479,8 +488,11 @@ public class SnakeGame extends JFrame {
 				}
 				else if (board.getTile(snakeHead.x, snakeHead.y) == TileType.SnakeBody) {
 					visitedArr[snakeHead.x][snakeHead.y] = true;
-				}else if(!visitedArr[neighborState.x][neighborState.y])
+				}else if(!visitedArr[neighborState.x][neighborState.y]){
 					queue.add(neighborState);
+					visitedArr[snakeHead.x][snakeHead.y] = true;
+				}
+
 			}
 			if(!queue.isEmpty())
 				currentState = queue.poll();
@@ -508,7 +520,7 @@ public class SnakeGame extends JFrame {
 
 		// Iterative deepening loop
 		while (fValueLimit <= maxLimit){
-			// System.out.println("Executing limit: " + fValueLimit);
+			System.out.println("Executing limit: " + fValueLimit);
 			initVisitedArr();
 			state = idAStar(currentState, fValueLimit);
 			if(state != null){
@@ -541,19 +553,28 @@ public class SnakeGame extends JFrame {
 			return currentState;
 		}
 		for (GameState neighbor: neighbors(currentState)){
+			//System.out.println("============");
+			//System.out.println("neighbor position: ("+neighbor.x+","+neighbor.y+")");
+			//System.out.println("============");
 			if(getHeuristic(neighbor.snake) >= (limit - 1) || visitedArr[neighbor.x][neighbor.y]){
 				// Do not explore if the state is too far or the stated has been visited
 				continue;
 			}
 			visitedArr[neighbor.x][neighbor.y] = true;
-			if(board.getTile(neighbor.x, neighbor.y) == TileType.SnakeBody)
+			if(neighbor.x < 0 || neighbor.y < 0 || neighbor.x >= 25 || neighbor.y >= 25 || board.getTile(neighbor.x, neighbor.y) == TileType.SnakeBody) {
+				if(board.getTile(neighbor.x,neighbor.y)==TileType.SnakeBody){
+					//System.out.println("I found a snake body at ("+neighbor.x+","+neighbor.y+")");
+				}
+
 				continue;
-			// Explore the neighbor with decreased limit
-			GameState gs = idAStar(neighbor,limit - 1);
-			// game state is null if we found nothing under this state
-			if(gs != null){
-				// Construct the result
-				return gs;
+			}else {
+				// Explore the neighbor with decreased limit
+				GameState gs = idAStar(neighbor, limit - 1);
+				// game state is null if we found nothing under this state
+				if (gs != null) {
+					// Construct the result
+					return gs;
+				}
 			}
 		}
 		// System.out.println("Returning null at level: " + limit);
@@ -578,7 +599,7 @@ public class SnakeGame extends JFrame {
 			else if(myY == parentY - 1)
 				return Direction.North;
 			else{
-				System.err.println("Error in state!");
+				System.err.println("Error in state! from ("+parentX+","+parentY+") to ("+myX+","+myY+")");
 				return null;
 			}
 		}
@@ -605,12 +626,34 @@ public class SnakeGame extends JFrame {
 	public LinkedList<GameState> neighbors (GameState state) {
 		LinkedList<GameState> res = new LinkedList<>();
 
-		res.add(generateNeighbor(state, Direction.East));
-		res.add(generateNeighbor(state, Direction.West));
-		res.add(generateNeighbor(state, Direction.North));
-		res.add(generateNeighbor(state, Direction.South));
+		GameState ge =generateNeighbor(state, Direction.East);
+		GameState gw =generateNeighbor(state, Direction.West);
+		GameState gn =generateNeighbor(state, Direction.North);
+		GameState gs =generateNeighbor(state, Direction.South);
+		if(goodState(ge)){
+			res.add(ge);
+		}
+		if(goodState(gw)){
+			res.add(gw);
+		}
+		if(goodState(gn)){
+			res.add(gn);
+		}
+		if(goodState(gs)){
+			res.add(gs);
+		}
+		//res.add(generateNeighbor(state, Direction.West));
+		//res.add(generateNeighbor(state, Direction.North));
+		//res.add(generateNeighbor(state, Direction.South));
+
 
 		return res;
+	}
+
+	public boolean goodState(GameState state) {
+		int headx = state.snake.peekFirst().x;
+		int heady = state.snake.peekFirst().y;
+		return (headx < BoardPanel.ROW_COUNT && heady < BoardPanel.COL_COUNT && headx >=0 && heady >= 0 && state.board.getTile(headx,heady) != TileType.SnakeBody && state.board.getTile(headx,heady) != TileType.SnakeHead);
 	}
 
 	/**
@@ -629,20 +672,28 @@ public class SnakeGame extends JFrame {
 		}
 		switch (dir){
 			case East:
-				head.x++;
-				neighbor.x++;
+				//if(head.x<BoardPanel.COL_COUNT-1 && neighbor.board.getTile(head.x+1,head.y)!=TileType.SnakeBody) {
+					head.x++;
+					neighbor.x++;
+				//}
 				break;
 			case West:
-				head.x--;
-				neighbor.x--;
+				//if(head.x>0 && neighbor.board.getTile(head.x-1,head.y)!=TileType.SnakeBody) {
+					head.x--;
+					neighbor.x--;
+				//}
 				break;
 			case South:
-				head.y++;
-				neighbor.y++;
+				//if(head.y<BoardPanel.ROW_COUNT-1 && neighbor.board.getTile(head.x,head.y+1)!=TileType.SnakeBody) {
+					head.y++;
+					neighbor.y++;
+				//}
 				break;
 			case North:
-				head.y--;
-				neighbor.y--;
+				//if(head.y>0 && neighbor.board.getTile(head.x,head.y-1)!=TileType.SnakeBody) {
+					head.y--;
+					neighbor.y--;
+				//}
 				break;
 		}
 		neighbor.snake.addFirst(head);
