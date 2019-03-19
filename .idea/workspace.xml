@@ -2,12 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff78e393-f8de-4c81-ac73-3978da1f8b3a" name="Default Changelist" comment="Add gamestate, aStar todo">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$MCTSState.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$MCTSState.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Node.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Node.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Tree.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame$Tree.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AnotherSnake/SnakeGame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BoardPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BoardPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SnakeGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SnakeGame.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -25,17 +19,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="544" column="81" lean-forward="true" selection-start-line="544" selection-start-column="81" selection-end-line="544" selection-end-column="81" />
+            <state relative-caret-position="347">
+              <caret line="1097" column="49" selection-start-line="1097" selection-start-column="49" selection-end-line="1097" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#21977#21978#0" expanded="true" />
-                <element signature="e#22142#22143#0" expanded="true" />
-                <element signature="e#22302#22303#0" expanded="true" />
-                <element signature="e#23890#23891#0" expanded="true" />
-                <element signature="e#24025#24026#0" expanded="true" />
-                <element signature="e#24164#24165#0" expanded="true" />
-                <element signature="e#24322#24323#0" expanded="true" />
+                <element signature="e#21984#21985#0" expanded="true" />
+                <element signature="e#22149#22150#0" expanded="true" />
+                <element signature="e#22309#22310#0" expanded="true" />
+                <element signature="e#23897#23898#0" expanded="true" />
+                <element signature="e#24032#24033#0" expanded="true" />
+                <element signature="e#24171#24172#0" expanded="true" />
+                <element signature="e#24329#24330#0" expanded="true" />
                 <element signature="e#24877#24878#0" expanded="true" />
                 <element signature="e#24912#24913#0" expanded="true" />
               </folding>
@@ -46,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="449">
-              <caret line="109" column="40" lean-forward="true" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
+            <state relative-caret-position="318">
+              <caret line="79" column="28" lean-forward="true" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2547#2548#0" expanded="true" />
@@ -120,6 +114,7 @@
       <find>isGoal</find>
       <find>getC</find>
       <find>body</find>
+      <find>going</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -173,7 +168,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552941123759" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552991652187" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
   </component>
@@ -282,11 +277,11 @@
       <window_info id="Capture Tool" order="4" />
       <window_info id="Favorites" order="5" side_tool="true" weight="0.3297568" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32765958" />
       <window_info anchor="bottom" id="Debug" order="2" weight="0.13758865" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Run" order="5" visible="true" weight="0.14751773" />
+      <window_info active="true" anchor="bottom" id="Run" order="5" visible="true" weight="0.20425531" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49946752" weight="0.13471502" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5005325" side_tool="true" weight="0.13694721" />
@@ -300,7 +295,7 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info active="true" anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.20886981" />
+      <window_info anchor="right" id="Structure" order="8" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.20886981" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49924356" visible="true" weight="0.10010649" />
@@ -377,8 +372,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/BoardPanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="109" column="40" lean-forward="true" selection-start-line="109" selection-start-column="40" selection-end-line="109" selection-end-column="40" />
+        <state relative-caret-position="318">
+          <caret line="79" column="28" lean-forward="true" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2547#2548#0" expanded="true" />
@@ -389,19 +384,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home/src.zip!/java/util/function/Consumer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="48" column="9" selection-start-line="48" selection-start-column="9" selection-end-line="48" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/SnakeGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="544" column="81" lean-forward="true" selection-start-line="544" selection-start-column="81" selection-end-line="544" selection-end-column="81" />
+        <state relative-caret-position="347">
+          <caret line="1097" column="49" selection-start-line="1097" selection-start-column="49" selection-end-line="1097" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#21977#21978#0" expanded="true" />
-            <element signature="e#22142#22143#0" expanded="true" />
-            <element signature="e#22302#22303#0" expanded="true" />
-            <element signature="e#23890#23891#0" expanded="true" />
-            <element signature="e#24025#24026#0" expanded="true" />
-            <element signature="e#24164#24165#0" expanded="true" />
-            <element signature="e#24322#24323#0" expanded="true" />
+            <element signature="e#21984#21985#0" expanded="true" />
+            <element signature="e#22149#22150#0" expanded="true" />
+            <element signature="e#22309#22310#0" expanded="true" />
+            <element signature="e#23897#23898#0" expanded="true" />
+            <element signature="e#24032#24033#0" expanded="true" />
+            <element signature="e#24171#24172#0" expanded="true" />
+            <element signature="e#24329#24330#0" expanded="true" />
             <element signature="e#24877#24878#0" expanded="true" />
             <element signature="e#24912#24913#0" expanded="true" />
           </folding>

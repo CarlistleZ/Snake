@@ -354,7 +354,7 @@ public class SnakeGame extends JFrame {
 		this.random = new Random();
 		this.snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(9.0f);
+		this.logicTimer = new Clock(19.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 
@@ -426,7 +426,7 @@ public class SnakeGame extends JFrame {
 					directions.addLast(Direction.South);
 					break;
 			}
-			System.out.println("I'm at: " + head.x +", "+head.y+"\tgoing: "+directions.peekLast());
+			// System.out.println("I'm at: " + head.x +", "+head.y+"\tgoing: "+directions.peekLast());
 			directionMap.remove(checkSum);
 		}
 	}
@@ -441,7 +441,7 @@ public class SnakeGame extends JFrame {
 		directionMap = new HashMap<>();
 		while (currentState.parent != null){
 			directionMap.put(currentState.parent.x + BoardPanel.COL_COUNT * currentState.parent.y, getStateDirection(currentState));
-			System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+"\tshould go "+getStateDirection(currentState));
+			// System.out.println("At "+currentState.parent.x+", "+currentState.parent.y+"\tshould go "+getStateDirection(currentState));
 			if(currentState.parent.parent == null){
 				secondLastX = currentState.x;
 				secondLastY = currentState.y;
@@ -945,17 +945,37 @@ public class SnakeGame extends JFrame {
 	 */
 
 	public class MCTSState extends GameState{
-		// Number of game played and won under this state
-		int played, wins;
+		// Number of game visited and won under this state
+		int visited, wins;
 		MCTSState(MCTSState parent){
 			// TODO
+			this(parent, 0);
+		}
+		MCTSState(MCTSState parent, int additionScore){
+			board = parent.board;
+			// snake = new LinkedList<>(snakeGame.snake);
+			snake = new LinkedList<>();
+			snake = (LinkedList<Point>) parent.snake.clone();
+			this.moves = 0;
+			this.parent = parent;
+			this.priority = 0;
+			x = snake.peekFirst().x;
+			y = snake.peekFirst().y;
+			this.visited = parent.visited + 1;
+			this.wins = parent.wins + additionScore;
 		}
 		MCTSState getPossibleStates(){
 			// TODO
+
 			return null;
 		}
 		public void randomPlay(){
 			// TODO
+		}
+
+		public List<MCTSState> getAllPossibleStates() {
+			// TODO
+			return null;
 		}
 	}
 
@@ -963,18 +983,36 @@ public class SnakeGame extends JFrame {
 		MCTSState state;
 		Node parent;
 		List<Node> childArr;
+
 		public Node(){
 			// TODO
 		}
+
+		public Node(Node that){
+			this.state = that.state;
+			this.parent = that.parent;
+			this.childArr = that.getChildArr();
+		}
+
 		public boolean hasFinished(){
 			return isGoal(state.snake);
 		}
 		public List<Node> getChildArr(){
+
 			return childArr;
 		}
+
 		public Node getRandomChildNode(){
 			// TODO
-			return null;
+			Random r = new Random();
+			int randomIndex = r.nextInt(childArr.size());
+			return childArr.get(randomIndex);
+		}
+
+		public int getEvaluation() {
+			// TODO
+			// get a value: 1 for win and -1 for lose
+			return -1;
 		}
 	}
 
@@ -1009,7 +1047,13 @@ public class SnakeGame extends JFrame {
 
 	private int simulateRandomPlayout(Node nodeToExplore) {
 		// TODO
-		return 0;
+		Node tempNode = new Node(nodeToExplore);
+		int res = 0;
+		while(!tempNode.hasFinished()){
+			tempNode = tempNode.getRandomChildNode();
+		}
+		// Now tempNode is a terminal state
+		return tempNode.getEvaluation();
 	}
 
 	/**
@@ -1019,6 +1063,12 @@ public class SnakeGame extends JFrame {
 	 */
 	private void backPropogation(Node nodeToExplore, int playoutResult) {
 		// TODO
+		Node tempNode = nodeToExplore;
+		while (tempNode != null) {
+			tempNode.state.visited++;
+			tempNode.state.wins += playoutResult;
+			tempNode = tempNode.parent;
+		}
 	}
 
 	/**
@@ -1027,6 +1077,13 @@ public class SnakeGame extends JFrame {
 	 */
 	private void expandNode(Node promisingNode) {
 		// TODO
+		List<MCTSState> possibleStates = promisingNode.state.getAllPossibleStates();
+		possibleStates.forEach(state -> {
+			Node newNode = new Node(promisingNode);
+			newNode.parent = promisingNode;
+			// newNode.state.setPlayerNo(promisingNode.getState().getOpponent());
+			promisingNode.childArr.add(newNode);
+		});
 	}
 
 	/**
@@ -1036,6 +1093,9 @@ public class SnakeGame extends JFrame {
 	 */
 	private Node selectPromisingNode(Node node) {
 		// TODO
+		// IMPORTANT!!!
+		// use formula  -Vi + c * √...
+		// use the inverted value of the opponent
 		return null;
 	}
 
