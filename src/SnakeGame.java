@@ -991,11 +991,13 @@ public class SnakeGame extends JFrame {
 	 *  -------------------------------------------------------------------------------------------
      */
 
-	public Direction MCTS(GameState gameState) {
+	public State MCTS(GameState gameState) {
 		// Initialize from a snake game state
-		Node rootNode = null;
 		Tree tree = new Tree();
 		// Initialize root here
+		Node rootNode = tree.getRoot();
+		rootNode.state.board = board;
+		rootNode.state.isAI = true;
 
 		while(haveTimeLeft()){
 			Node promisingNode = selectPromisingNode(rootNode);
@@ -1011,7 +1013,9 @@ public class SnakeGame extends JFrame {
 		}
 
 		// Return the direction so far
-		return Direction.North;
+		Node winnerNode = rootNode.getChildWithMaxScore();
+		tree.setRoot(winnerNode);
+		return winnerNode.state;
 	}
 
 	private int simulateRandomPlayout(Node node) {
