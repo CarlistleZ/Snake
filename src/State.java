@@ -3,8 +3,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class State {
+    public static final int IN_PROGRESS = 0;
+    public static final int PLAYER_WIN = -1;
+    public static final int AI_WIN = 1;
+
     public BoardPanel board;
-    LinkedList<Point> snake;
+    LinkedList<Point> snake, playerSnake;
     public boolean isAI;
     public int visitCount;
     public double winScore;
@@ -17,6 +21,7 @@ public class State {
     public State(State state) {
         this.board = new BoardPanel(state.board);
         this.snake = (LinkedList<Point>) state.snake.clone();
+        this.playerSnake = (LinkedList<Point>) state.playerSnake.clone();
         this.isAI = state.isAI;
         this.visitCount = state.visitCount;
         this.winScore = state.winScore;
@@ -31,19 +36,15 @@ public class State {
 
     public List<State> getAllPossibleStates() {
         List<State> possibleStates = new LinkedList<>();
-//        List<Position> availablePositions = this.board.getEmptyPositions();
-//        availablePositions.forEach(p -> {
-//            State newState = new State(this.board);
-//            newState.setPlayerNo(3 - this.playerNo);
-//            newState.getBoard().performMove(newState.getPlayerNo(), p);
-//            possibleStates.add(newState);
-//        });
-        // TODO
+        possibleStates.addAll(neighbors(isAI ? snake : playerSnake));
         return possibleStates;
     }
 
-    void incrementVisit() {
-        this.visitCount++;
+    private List<State> neighbors(LinkedList<Point> snake) {
+        List<State> res = new LinkedList<>();
+        // TODO
+        // Generate a list of neighbors of snake
+        return res;
     }
 
     void addScore(double score) {
@@ -61,5 +62,17 @@ public class State {
 
     void togglePlayer() {
         this.isAI = !this.isAI;
+    }
+
+    public int checkStatus(){
+        if(snake.peekFirst().x == board.fruitX && snake.peekFirst().y == board.fruitY){
+            if(isAI){
+                return AI_WIN;
+            }else{
+                return PLAYER_WIN;
+            }
+        }else{
+            return IN_PROGRESS;
+        }
     }
 }
