@@ -23,7 +23,6 @@ public class SnakeGame extends JFrame {
 		// Generate a state from a game
 		GameState(SnakeGame snakeGame, int moves, int priority){
 			board = snakeGame.board;
-			// snake = new LinkedList<>(snakeGame.snake);
 			snake = new LinkedList<>();
 			snake = (LinkedList<Point>) snakeGame.snake.clone();
 			this.moves = moves;
@@ -903,6 +902,8 @@ public class SnakeGame extends JFrame {
 						board.setTile(x, y, TileType.Fruit);
 						fruitX = x;
 						fruitY = y;
+						board.fruitX = x;
+						board.fruitY = y;
 						break;
 					}
 				}
@@ -974,37 +975,46 @@ public class SnakeGame extends JFrame {
 			if (promisingNode.childArray.size() > 0) {
 				nodeToExplore = promisingNode.getRandomChildNode();
 			}
-
 			int playoutResult = simulateRandomPlayout(nodeToExplore);
-			backPropogation(nodeToExplore, playoutResult);
+			backPropagation(nodeToExplore, playoutResult);
 		}
 
 		// Return the direction so far
 		return Direction.North;
 	}
 
-	private int simulateRandomPlayout(Node nodeToExplore) {
-		// TODO
-		Node tempNode = new Node(nodeToExplore);
-		int res = 0;
-		while(!isGoal(tempNode.state.snake)){
-			tempNode = tempNode.getRandomChildNode();
+	private int simulateRandomPlayout(Node node) {
+		Node tempNode = new Node(node);
+		State tempState = tempNode.state;
+		int boardStatus = tempState.checkStatus();
+
+		if (boardStatus == State.PLAYER_WIN) {
+			tempNode.parent.state.winScore = Integer.MIN_VALUE;
+			return boardStatus;
 		}
-		// Now tempNode is a terminal state
-		return (int)tempNode.state.winScore;
+		while (boardStatus == State.IN_PROGRESS) {
+			tempState.togglePlayer();
+			tempState.randomPlay();
+			boardStatus = tempState.checkStatus();
+		}
+
+		return boardStatus;
 	}
 
 	/**
-	 *
+	 * Propagate the play out simulation value towards the root
 	 * @param nodeToExplore
 	 * @param playoutResult
 	 */
-	private void backPropogation(Node nodeToExplore, int playoutResult) {
-		// TODO
+	private void backPropagation(Node nodeToExplore, int playoutResult) {
 		Node tempNode = nodeToExplore;
+		boolean isAINode = nodeToExplore.state.isAI;
 		while (tempNode != null) {
 			tempNode.state.visitCount++;
-			tempNode.state.winScore += playoutResult;
+			if(tempNode.state.isAI == isAINode)
+				tempNode.state.addScore(playoutResult);
+			else
+				tempNode.state.addScore(-playoutResult);
 			tempNode = tempNode.parent;
 		}
 	}
@@ -1014,27 +1024,27 @@ public class SnakeGame extends JFrame {
 	 * @param promisingNode
 	 */
 	private void expandNode(Node promisingNode) {
-		// TODO
-		List<State> possibleStates = null;  // promisingNode.state.getAllPossibleStates();
+		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
 		possibleStates.forEach(state -> {
 			Node newNode = new Node(promisingNode);
 			newNode.parent = promisingNode;
-			// newNode.state.setPlayerNo(promisingNode.getState().getOpponent());
+			newNode.state.isAI = promisingNode.state.getOpponent();
 			promisingNode.childArray.add(newNode);
 		});
 	}
 
 	/**
 	 * Choose the best child node under the node
-	 * @param node The node to develop
+	 * @param rootNode The node to develop
 	 * @return its best child node
 	 */
-	private Node selectPromisingNode(Node node) {
-		// TODO
-		// IMPORTANT!!!
-		// use formula  -Vi + c * √...
-		// use the inverted value of the opponent
-		return null;
+	private Node selectPromisingNode(Node rootNode) {
+		Node node = rootNode;
+		while (node.childArray.size() != 0) {
+			// descend to the best child node
+			node = UCB.findBestNodeWithUCB(node);
+		}
+		return node;
 	}
 
 	/**

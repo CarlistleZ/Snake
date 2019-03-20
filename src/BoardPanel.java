@@ -17,13 +17,13 @@ public class BoardPanel extends JPanel {
 	 * The number of columns on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int COL_COUNT = 15;
+	public static final int COL_COUNT = 25;
 	
 	/**
 	 * The number of rows on the board. (Should be odd so we can start in
 	 * the center).
 	 */
-	public static final int ROW_COUNT = 15;
+	public static final int ROW_COUNT = 25;
 	
 	/**
 	 * The size of each tile in pixels.
@@ -59,6 +59,8 @@ public class BoardPanel extends JPanel {
 	 * The array of tiles that make up this board.
 	 */
 	private TileType[] tiles;
+
+	public int fruitX, fruitY;
 		
 	/**
 	 * Creates a new BoardPanel instance.
