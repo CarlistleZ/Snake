@@ -7,7 +7,7 @@ public class UCB {
         if (nodeVisit == 0) {
             return Integer.MAX_VALUE;
         }
-        return (nodeWinScore / (double) nodeVisit) + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
+        return - (nodeWinScore / (double) nodeVisit) + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
     }
 
     static Node findBestNodeWithUCB(Node node) {

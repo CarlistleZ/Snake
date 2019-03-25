@@ -376,7 +376,7 @@ public class SnakeGame extends JFrame {
 		this.snake = new LinkedList<>();
 		this.player_snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(3f);
+		this.logicTimer = new Clock(7.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 		this.player_directions = new LinkedList<>();
@@ -943,7 +943,8 @@ public class SnakeGame extends JFrame {
 
 
 		// Use A Star to generate a path to the goal
-		idAStar();
+		// idAStar();
+		snake = MCTS(new GameState(this, 0, getHeuristic(snake))).snake;
 	}
 	
 	/**
