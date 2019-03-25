@@ -3,19 +3,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class State {
-    public static final int IN_PROGRESS = 0;
-    public static final int PLAYER_WIN = -1;
-    public static final int AI_WIN = 1;
+    static final int IN_PROGRESS = 0;
+    static final int PLAYER_WIN = -1;
+    static final int AI_WIN = 1;
 
-    public BoardPanel board;
+    BoardPanel board;
     LinkedList<Point> snake, playerSnake;
-    public boolean isAI;
-    public int visitCount;
-    public double winScore;
+    boolean isAI;
+    int visitCount;
+    double winScore;
 
     public State() {
         board = new BoardPanel();
         this.snake = new LinkedList<>();
+        this.playerSnake = new LinkedList<>();
+        isAI = true;
+        visitCount = 0;
+        winScore = Integer.MIN_VALUE;
     }
 
     public State(State state) {
@@ -29,6 +33,7 @@ public class State {
 
     public State(SnakeGame game) {
         this.snake = new LinkedList<>();
+        this.playerSnake = new LinkedList<>();
         this.board = new BoardPanel(game);
     }
 
@@ -42,22 +47,61 @@ public class State {
 
     private List<State> neighbors(LinkedList<Point> snake) {
         List<State> res = new LinkedList<>();
-        // TODO
+        Direction[] allDirections =
+                {Direction.East, Direction.West, Direction.North, Direction.South};
         // Generate a list of neighbors of snake
+        for(Direction direction: allDirections){
+            res.add(generateNeighbor(this, direction));
+        }
         return res;
     }
+
+    private State generateNeighbor(State state, Direction dir){
+        State neighbor = new State(state);
+        Point head;
+        if(neighbor.isAI){
+            head = new Point(neighbor.snake.peekFirst());
+        }else{
+            head = new Point(neighbor.playerSnake.peekFirst());
+        }
+        switch (dir){
+            case East:
+                head.x++;
+                break;
+            case West:
+                head.x--;
+                break;
+            case South:
+                head.y++;
+                break;
+            case North:
+                head.y--;
+                break;
+        }
+        if(neighbor.isAI){
+            neighbor.snake.addFirst(head);
+            neighbor.snake.removeLast();
+        }else{
+            neighbor.playerSnake.addFirst(head);
+            neighbor.playerSnake.removeLast();
+        }
+        return neighbor;
+    }
+
 
     void addScore(double score) {
         if (this.winScore != Integer.MIN_VALUE)
             this.winScore += score;
     }
 
-    void randomPlay() {
+    State randomPlay() {
 //        List<Position> availablePositions = this.board.getEmptyPositions();
 //        int totalPossibilities = availablePositions.size();
 //        int selectRandom = (int) (Math.random() * totalPossibilities);
 //        this.board.performMove(this.playerNo, availablePositions.get(selectRandom));
-        // TODO
+        List<State>neighborList = neighbors(this.snake);
+        int selectRandom = (int) (Math.random() * neighborList.size());
+        return neighborList.get(selectRandom);
     }
 
     void togglePlayer() {
@@ -66,11 +110,7 @@ public class State {
 
     public int checkStatus(){
         if(snake.peekFirst().x == board.fruitX && snake.peekFirst().y == board.fruitY){
-            if(isAI){
-                return AI_WIN;
-            }else{
-                return PLAYER_WIN;
-            }
+            return isAI ? AI_WIN : PLAYER_WIN;
         }else{
             return IN_PROGRESS;
         }

@@ -673,7 +673,7 @@ public class SnakeGame extends JFrame {
 		neighbor.snake.removeLast();
 		// Calculate the new heuristic with the new head
 		neighbor.priority = neighbor.moves + getHeuristic(neighbor.snake);
-//		System.out.println("Neighbor is: "+neighbor.x+", "+neighbor.y);
+		// System.out.println("Neighbor is: "+neighbor.x+", "+neighbor.y);
 		return neighbor;
 	}
 
@@ -991,6 +991,9 @@ public class SnakeGame extends JFrame {
 	 *  -------------------------------------------------------------------------------------------
      */
 
+	// counter for MCTS test
+	private int MCTSLoopCounter;
+
 	public State MCTS(GameState gameState) {
 		// Initialize from a snake game state
 		Tree tree = new Tree();
@@ -999,7 +1002,8 @@ public class SnakeGame extends JFrame {
 		rootNode.state.board = board;
 		rootNode.state.isAI = true;
 
-		while(haveTimeLeft()){
+		MCTSLoopCounter = 0;
+		while(haveTimeLeft() || MCTSLoopCounter < 100){
 			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake)){
 				expandNode(promisingNode);
@@ -1010,62 +1014,13 @@ public class SnakeGame extends JFrame {
 			}
 			int playoutResult = simulateRandomPlayout(nodeToExplore);
 			backPropagation(nodeToExplore, playoutResult);
+			MCTSLoopCounter++;
 		}
 
 		// Return the direction so far
 		Node winnerNode = rootNode.getChildWithMaxScore();
 		tree.setRoot(winnerNode);
 		return winnerNode.state;
-	}
-
-	private int simulateRandomPlayout(Node node) {
-		Node tempNode = new Node(node);
-		State tempState = tempNode.state;
-		int boardStatus = tempState.checkStatus();
-
-		if (boardStatus == State.PLAYER_WIN) {
-			tempNode.parent.state.winScore = Integer.MIN_VALUE;
-			return boardStatus;
-		}
-		while (boardStatus == State.IN_PROGRESS) {
-			tempState.togglePlayer();
-			tempState.randomPlay();
-			boardStatus = tempState.checkStatus();
-		}
-
-		return boardStatus;
-	}
-
-	/**
-	 * Propagate the play out simulation value towards the root
-	 * @param nodeToExplore
-	 * @param playoutResult
-	 */
-	private void backPropagation(Node nodeToExplore, int playoutResult) {
-		Node tempNode = nodeToExplore;
-		boolean isAINode = nodeToExplore.state.isAI;
-		while (tempNode != null) {
-			tempNode.state.visitCount++;
-			if(tempNode.state.isAI == isAINode)
-				tempNode.state.addScore(playoutResult);
-			else
-				tempNode.state.addScore(-playoutResult);
-			tempNode = tempNode.parent;
-		}
-	}
-
-	/**
-	 * Expand the promising node
-	 * @param promisingNode
-	 */
-	private void expandNode(Node promisingNode) {
-		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
-		possibleStates.forEach(state -> {
-			Node newNode = new Node(promisingNode);
-			newNode.parent = promisingNode;
-			newNode.state.isAI = promisingNode.state.getOpponent();
-			promisingNode.childArray.add(newNode);
-		});
 	}
 
 	/**
@@ -1083,12 +1038,59 @@ public class SnakeGame extends JFrame {
 	}
 
 	/**
+	 * Expand the promising node
+	 * @param promisingNode
+	 */
+	private void expandNode(Node promisingNode) {
+		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
+		possibleStates.forEach(state -> {
+			Node newNode = new Node(promisingNode);
+			newNode.parent = promisingNode;
+			newNode.state.isAI = promisingNode.state.getOpponent();
+			promisingNode.childArray.add(newNode);
+		});
+	}
+
+
+	private int simulateRandomPlayout(Node node) {
+		Node tempNode = new Node(node);
+		State tempState = tempNode.state;
+		int boardStatus = tempState.checkStatus();
+
+		while (boardStatus == State.IN_PROGRESS) {
+			tempState.togglePlayer();
+			tempState = tempState.randomPlay();
+			boardStatus = tempState.checkStatus();
+		}
+
+		return boardStatus;
+	}
+
+	/**
+	 * Propagate the play out simulation value towards the root
+	 * @param nodeToExplore
+	 * @param playoutResult
+	 */
+	private void backPropagation(Node nodeToExplore, int playoutResult) {
+		Node tempNode = nodeToExplore;
+		boolean isAINode = tempNode.state.isAI;
+		while (tempNode != null) {
+			tempNode.state.visitCount++;
+			if(tempNode.state.isAI == isAINode)
+				tempNode.state.addScore(playoutResult);
+			else
+				tempNode.state.addScore(-playoutResult);
+			tempNode = tempNode.parent;
+		}
+	}
+
+	/**
 	 * Method used in the MCTS loop to check if time has ran out in one interval
 	 * @return if there's time left until the next update
 	 */
 	public boolean haveTimeLeft(){
 		// TODO
-		return false;
+		return true;
 	}
 
 }
