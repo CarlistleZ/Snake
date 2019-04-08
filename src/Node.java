@@ -38,12 +38,33 @@ public class Node {
     public Node getRandomChildNode() {
         int noOfPossibleMoves = this.childArray.size();
         int selectRandom = (int) (Math.random() * noOfPossibleMoves);
-        return this.childArray.get(selectRandom);
+        Node res = this.childArray.get(selectRandom);
+        return res;
     }
 
     public Node getChildWithMaxScore() {
         return Collections.max(this.childArray, Comparator.comparing(c -> {
             return c.state.visitCount;
         }));
+    }
+    public Direction getDirectionfromChild(Node child){
+        int thisX, thisY, childX, childY;
+        thisX = state.snake.peekFirst().x;
+        thisY = state.snake.peekFirst().y;
+        childX = child.state.snake.peekFirst().x;
+        childY = child.state.snake.peekFirst().y;
+        if(thisX == childX){
+            if(thisY == (childY + 1))
+                return Direction.North;
+            else
+                return Direction.South;
+        }
+        else{
+            // The same Y
+            if(thisX == (childX + 1))
+                return Direction.West;
+            else
+                return Direction.East;
+        }
     }
 }

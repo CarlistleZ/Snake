@@ -148,7 +148,7 @@ public class SnakeGame extends JFrame {
 	 * The list that contains the queued directions.
 	 */
 	private LinkedList<Direction> directions;
-	private LinkedList<Direction> player_directions;
+	private LinkedList<Direction> playerDirections;
 	
 	/**
 	 * The current moves.
@@ -311,12 +311,25 @@ public class SnakeGame extends JFrame {
 		setVisible(true);
 	}
 
+	private void goTowardsDirection(Direction dir){
+		switch (dir){
+			case East:
+				goEastAI();
+			case West:
+				goWestAI();
+			case North:
+				goNorthAI();
+			case South:
+				goSouthAI();
+		}
+	}
+
 	private void goNorth(){
 		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = player_directions.peekLast();
+			if(playerDirections.size() < MAX_DIRECTIONS) {
+				Direction last = playerDirections.peekLast();
 				if(last != Direction.South && last != Direction.North) {
-					player_directions.addLast(Direction.North);
+					playerDirections.addLast(Direction.North);
 				}
 			}
 		}
@@ -324,10 +337,10 @@ public class SnakeGame extends JFrame {
 
 	private void goSouth(){
 		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = player_directions.peekLast();
+			if(playerDirections.size() < MAX_DIRECTIONS) {
+				Direction last = playerDirections.peekLast();
 				if(last != Direction.North && last != Direction.South) {
-					player_directions.addLast(Direction.South);
+					playerDirections.addLast(Direction.South);
 				}
 			}
 		}
@@ -335,10 +348,10 @@ public class SnakeGame extends JFrame {
 
 	private void goEast(){
 		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = player_directions.peekLast();
+			if(playerDirections.size() < MAX_DIRECTIONS) {
+				Direction last = playerDirections.peekLast();
 				if(last != Direction.West && last != Direction.East) {
-					player_directions.addLast(Direction.East);
+					playerDirections.addLast(Direction.East);
 				}
 			}
 		}
@@ -346,10 +359,58 @@ public class SnakeGame extends JFrame {
 
 	private void goWest(){
 		if(!isPaused && !isGameOver) {
-			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = player_directions.peekLast();
+			if(playerDirections.size() < MAX_DIRECTIONS) {
+				Direction last = playerDirections.peekLast();
 				if(last != Direction.East && last != Direction.West) {
-					player_directions.addLast(Direction.West);
+					playerDirections.addLast(Direction.West);
+				}
+			}
+		}
+	}
+
+	private void goNorthAI(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.South && last != Direction.North) {
+					directions.addLast(Direction.North);
+					mcts(new GameState(this, 0, getHeuristic(snake)), false);
+				}
+			}
+		}
+	}
+
+	private void goSouthAI(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.North && last != Direction.South) {
+					directions.addLast(Direction.South);
+					mcts(new GameState(this, 0, getHeuristic(snake)), false);
+				}
+			}
+		}
+	}
+
+	private void goEastAI(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.West && last != Direction.East) {
+					directions.addLast(Direction.East);
+					mcts(new GameState(this, 0, getHeuristic(snake)), false);
+				}
+			}
+		}
+	}
+
+	private void goWestAI(){
+		if(!isPaused && !isGameOver) {
+			if(directions.size() < MAX_DIRECTIONS) {
+				Direction last = directions.peekLast();
+				if(last != Direction.East && last != Direction.West) {
+					directions.addLast(Direction.West);
+					mcts(new GameState(this, 0, getHeuristic(snake)), false);
 				}
 			}
 		}
@@ -379,7 +440,7 @@ public class SnakeGame extends JFrame {
 		this.logicTimer = new Clock(7.0f);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
-		this.player_directions = new LinkedList<>();
+		this.playerDirections = new LinkedList<>();
 
 		//Set the timer to paused initially.
 		logicTimer.setPaused(true);
@@ -687,12 +748,12 @@ public class SnakeGame extends JFrame {
 		 * are handled identically.
 		 */
 		TileType collision = updateSnake(snake,directions);
-		System.out.println("====Updating player snake ====");
-		for(Direction d:player_directions){
-			System.out.println(d);
-		}
-		System.out.println("=======================");
-		TileType player_collision = updateSnake(player_snake,player_directions);
+//		System.out.println("====Updating player snake ====");
+//		for(Direction d:playerDirections){
+//			System.out.println(d);
+//		}
+//		System.out.println("=======================");
+		TileType player_collision = updateSnake(player_snake, playerDirections);
 		
 		/*
 		 * Here we handle the different possible collisions.
@@ -847,7 +908,7 @@ public class SnakeGame extends JFrame {
 
 		player_snake.clear();
 		player_snake.add(player_head);
-		player_directions.addLast(Direction.East);
+		playerDirections.addLast(Direction.East);
 		
 		/*
 		 * Clear the board and add the head.
@@ -943,8 +1004,8 @@ public class SnakeGame extends JFrame {
 
 
 		// Use A Star to generate a path to the goal
-		// idAStar();
-		snake = MCTS(new GameState(this, 0, getHeuristic(snake))).snake;
+//		 idAStar();
+		mcts(new GameState(this, 0, getHeuristic(snake)), true);
 	}
 	
 	/**
@@ -988,28 +1049,33 @@ public class SnakeGame extends JFrame {
 
 	/**
 	 *  -------------------------------------------------------------------------------------------
-	 *  *****************************  Monte Carlo Tree Search (MCTS) *****************************
+	 *  *****************************  Monte Carlo Tree Search (mcts) *****************************
 	 *  -------------------------------------------------------------------------------------------
      */
 
-	// counter for MCTS test
+	// counter for mcts test
 	private int MCTSLoopCounter;
+	private Tree tree;
 
-	public State MCTS(GameState gameState) {
+	public void mcts(GameState gameState, boolean isStart) {
 		// Initialize from a snake game state
-		Tree tree = new Tree();
+		if (isStart){
+			tree = new Tree();
+		}
 		// Initialize root here
 		Node rootNode = tree.getRoot();
 		rootNode.state.board = board;
+		rootNode.state.snake = gameState.snake;
+		rootNode.state.playerSnake = gameState.player_snake;
 		rootNode.state.isAI = true;
 
 		MCTSLoopCounter = 0;
-		while(haveTimeLeft() || MCTSLoopCounter < 100){
+		while(haveTimeLeft() && MCTSLoopCounter < 100){
 			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake)){
 				expandNode(promisingNode);
 			}
-			Node nodeToExplore = promisingNode;
+			Node nodeToExplore = null;
 			if (promisingNode.childArray.size() > 0) {
 				nodeToExplore = promisingNode.getRandomChildNode();
 			}
@@ -1017,11 +1083,14 @@ public class SnakeGame extends JFrame {
 			backPropagation(nodeToExplore, playoutResult);
 			MCTSLoopCounter++;
 		}
-
-		// Return the direction so far
+		// Return the best predictable direction so far
 		Node winnerNode = rootNode.getChildWithMaxScore();
-		tree.setRoot(winnerNode);
-		return winnerNode.state;
+//		System.out.println("Root at: " + tree.root.state.snake.peekFirst());
+//		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
+		// tree.setRoot(winnerNode);
+		Direction dir = tree.root.getDirectionfromChild(winnerNode);
+		System.out.println("Going: " + dir);
+		goTowardsDirection(dir);
 	}
 
 	/**
@@ -1044,24 +1113,28 @@ public class SnakeGame extends JFrame {
 	 */
 	private void expandNode(Node promisingNode) {
 		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
-		possibleStates.forEach(state -> {
-			Node newNode = new Node(promisingNode);
-			newNode.parent = promisingNode;
-			newNode.state.isAI = promisingNode.state.getOpponent();
-			promisingNode.childArray.add(newNode);
-		});
+		for (State s: possibleStates){
+			Node neighborNode = new Node(s);
+			neighborNode.parent = promisingNode;
+			neighborNode.state.isAI = promisingNode.state.getOpponent();
+			promisingNode.childArray.add(neighborNode);
+		}
 	}
 
 
 	private int simulateRandomPlayout(Node node) {
+		// System.out.println("Fruit at: (" + fruitX + ", " + fruitY + ")");
 		Node tempNode = new Node(node);
 		State tempState = tempNode.state;
 		int boardStatus = tempState.checkStatus();
 
 		while (boardStatus == State.IN_PROGRESS) {
-			tempState.togglePlayer();
+//			 System.out.println("Is AI? " + tempState.isAI + " ,simulating at: " +
+//					(tempState.isAI ? tempState.snake.peekFirst() : tempState.playerSnake.peekFirst()));
 			tempState = tempState.randomPlay();
+			tempState.togglePlayer();
 			boardStatus = tempState.checkStatus();
+//			System.out.println("BoardStatus: " + boardStatus);
 		}
 
 		return boardStatus;
@@ -1073,6 +1146,7 @@ public class SnakeGame extends JFrame {
 	 * @param playoutResult
 	 */
 	private void backPropagation(Node nodeToExplore, int playoutResult) {
+//		System.out.println("Propagating from " + nodeToExplore.state.getRightSnakeHead() + " with value: " + playoutResult);
 		Node tempNode = nodeToExplore;
 		boolean isAINode = tempNode.state.isAI;
 		while (tempNode != null) {
@@ -1081,17 +1155,17 @@ public class SnakeGame extends JFrame {
 				tempNode.state.addScore(playoutResult);
 			else
 				tempNode.state.addScore(-playoutResult);
+//			System.out.println("\tGo to: " + tempNode.state.getRightSnakeHead() + " isAI? " + tempNode.state.isAI);
 			tempNode = tempNode.parent;
 		}
 	}
 
 	/**
-	 * Method used in the MCTS loop to check if time has ran out in one interval
+	 * Method used in the mcts loop to check if time has ran out in one interval
 	 * @return if there's time left until the next update
 	 */
 	public boolean haveTimeLeft(){
 		// TODO
 		return true;
 	}
-
 }

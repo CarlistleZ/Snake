@@ -23,7 +23,7 @@ public class State {
     }
 
     public State(State state) {
-        this.board = new BoardPanel(state.board);
+        this.board = state.board;
         this.snake = (LinkedList<Point>) state.snake.clone();
         this.playerSnake = (LinkedList<Point>) state.playerSnake.clone();
         this.isAI = state.isAI;
@@ -99,7 +99,8 @@ public class State {
 //        int totalPossibilities = availablePositions.size();
 //        int selectRandom = (int) (Math.random() * totalPossibilities);
 //        this.board.performMove(this.playerNo, availablePositions.get(selectRandom));
-        List<State>neighborList = neighbors(this.snake);
+        LinkedList<Point> snakeToCheck = isAI ? snake : playerSnake;
+        List<State>neighborList = neighbors(snakeToCheck);
         int selectRandom = (int) (Math.random() * neighborList.size());
         return neighborList.get(selectRandom);
     }
@@ -109,10 +110,19 @@ public class State {
     }
 
     public int checkStatus(){
-        if(snake.peekFirst().x == board.fruitX && snake.peekFirst().y == board.fruitY){
+        LinkedList<Point> snakeToCheck = isAI ? snake : playerSnake;
+        // System.out.println("Checking status for: isAI= " + isAI + " at: " + snakeToCheck.peekFirst());
+        if (!board.inBoard(snakeToCheck.peekFirst())){
+            return isAI ? PLAYER_WIN : AI_WIN;
+        }else if(snakeToCheck.peekFirst().x == board.fruitX && snakeToCheck.peekFirst().y == board.fruitY){
             return isAI ? AI_WIN : PLAYER_WIN;
-        }else{
+        } else if(board.getTile(snakeToCheck.peekFirst()) == TileType.SnakeBody) {
+            return isAI ? PLAYER_WIN : AI_WIN;
+        } else {
             return IN_PROGRESS;
         }
+    }
+    public Point getRightSnakeHead(){
+        return isAI ? snake.peekFirst() : playerSnake.peekFirst();
     }
 }

@@ -124,6 +124,16 @@ public class BoardPanel extends JPanel {
 	public TileType getTile(Point point) {
 		return getTile((int)point.getX(), (int)point.getY());
 	}
+
+	public boolean inBoard(Point point){
+		int x = (int)point.getX();
+		int y = (int)point.getY();
+		if(x < 0 || x >= COL_COUNT)
+			return false;
+		if(y < 0 || y >= ROW_COUNT)
+			return false;
+		return true;
+	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
