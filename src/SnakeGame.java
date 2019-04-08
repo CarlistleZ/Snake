@@ -425,6 +425,7 @@ public class SnakeGame extends JFrame {
 		}
 	}
 
+	private static float clockFrequency = 7.0f;
 
 	/**
 	 * Starts the game running in player mode with actions.
@@ -437,7 +438,7 @@ public class SnakeGame extends JFrame {
 		this.snake = new LinkedList<>();
 		this.player_snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
-		this.logicTimer = new Clock(7.0f);
+		this.logicTimer = new Clock(clockFrequency);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
 		this.playerDirections = new LinkedList<>();
@@ -1049,7 +1050,7 @@ public class SnakeGame extends JFrame {
 
 	/**
 	 *  -------------------------------------------------------------------------------------------
-	 *  *****************************  Monte Carlo Tree Search (mcts) *****************************
+	 *  *****************************  Monte Carlo Tree Search (MCTS) *****************************
 	 *  -------------------------------------------------------------------------------------------
      */
 
@@ -1070,7 +1071,8 @@ public class SnakeGame extends JFrame {
 		rootNode.state.isAI = true;
 
 		MCTSLoopCounter = 0;
-		while(haveTimeLeft() && MCTSLoopCounter < 100){
+		setNanoTime();
+		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 100){
 			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake)){
 				expandNode(promisingNode);
@@ -1087,7 +1089,7 @@ public class SnakeGame extends JFrame {
 		Node winnerNode = rootNode.getChildWithMaxScore();
 //		System.out.println("Root at: " + tree.root.state.snake.peekFirst());
 //		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
-		// tree.setRoot(winnerNode);
+		 tree.setRoot(winnerNode);
 		Direction dir = tree.root.getDirectionfromChild(winnerNode);
 		System.out.println("Going: " + dir);
 		goTowardsDirection(dir);
@@ -1123,7 +1125,7 @@ public class SnakeGame extends JFrame {
 
 
 	private int simulateRandomPlayout(Node node) {
-		// System.out.println("Fruit at: (" + fruitX + ", " + fruitY + ")");
+//		 System.out.println("Fruit at: (" + fruitX + ", " + fruitY + ")");
 		Node tempNode = new Node(node);
 		State tempState = tempNode.state;
 		int boardStatus = tempState.checkStatus();
@@ -1160,12 +1162,20 @@ public class SnakeGame extends JFrame {
 		}
 	}
 
+	private static long nanoTimeStamp;
+
+
+	private void setNanoTime(){
+		nanoTimeStamp = System.nanoTime();
+	}
+
 	/**
 	 * Method used in the mcts loop to check if time has ran out in one interval
 	 * @return if there's time left until the next update
 	 */
 	public boolean haveTimeLeft(){
 		// TODO
-		return true;
+		long currentTimeStamp = System.nanoTime();
+		return (nanoTimeStamp + 0.5 * clockFrequency / Math.pow(1.0, 9.0)) > currentTimeStamp;
 	}
 }
