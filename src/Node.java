@@ -67,7 +67,7 @@ public class Node {
         }
         else{
             // The same Y
-            if(thisX > childX + 1)
+            if(thisX > childX)
                 return Direction.West;
             else
                 return Direction.East;

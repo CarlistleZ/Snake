@@ -1084,7 +1084,7 @@ public class SnakeGame extends JFrame {
 
 		MCTSLoopCounter = 0;
 		setNanoTime();
-		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 100){
+		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 1000){
 			Node promisingNode = selectPromisingNode(rootNode);
 			if( MCTSLoopCounter == 98){
 				boolean bl = true;

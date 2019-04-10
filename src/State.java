@@ -51,7 +51,9 @@ public class State {
                 {Direction.East, Direction.West, Direction.North, Direction.South};
         // Generate a list of neighbors of snake
         for(Direction direction: allDirections){
-            res.add(generateNeighbor(this, direction));
+            State tempState = generateNeighbor(this, direction);
+            if(tempState != null)
+                res.add(tempState);
         }
         return res;
     }
@@ -78,6 +80,12 @@ public class State {
                 head.y--;
                 break;
         }
+        if (!board.inBoard(head)) {
+            return null;
+        }
+        if (board.getTile(head) == TileType.SnakeBody)
+            return null;
+
         if(neighbor.isAI){
             neighbor.snake.addFirst(head);
             neighbor.snake.removeLast();
