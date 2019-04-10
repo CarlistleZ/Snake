@@ -38,7 +38,7 @@ public class State {
     }
 
     public String toString(){
-        return "State " + (isAI ? "AI" : "player") + " Score:( " + winScore + " , " + visitCount + " ) " +
+        return "State " + (isAI ? "AI" : "PLAYER") + " Score:( " + winScore + " , " + visitCount + " ) " +
                 "snake: (" + snake.peekFirst().getX()+", "+snake.peekFirst().getY() +
                 ") player snake: (" + playerSnake.peekFirst().getX() + ", " + playerSnake.peekFirst().getY()+")";
     }

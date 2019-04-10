@@ -10,11 +10,19 @@ public class UCB {
         return (nodeWinScore / (double) nodeVisit) + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
     }
 
-    static Node findBestNodeWithUCB(Node node) {
+    static Node findBestNodeWithUCB(Node node, boolean isAI) {
         int parentVisit = node.state.visitCount;
-        System.out.println("Child array: " + node.childArray);
-        return Collections.max(
-                node.childArray,
-                Comparator.comparing(c -> ucbValue(parentVisit, c.state.winScore, c.state.visitCount)));
+//        System.out.println("Children array: " + node.childArray);
+        if (isAI) {
+            return Collections.max(
+                    node.childArray,
+                    Comparator.comparing(c -> ucbValue(parentVisit, c.state.winScore, c.state.visitCount)));
+
+        } else {
+            return Collections.min(
+                    node.childArray,
+                    Comparator.comparing(c -> ucbValue(parentVisit, c.state.winScore, c.state.visitCount)));
+
+        }
     }
 }

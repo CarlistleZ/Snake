@@ -43,7 +43,9 @@ public class Node {
     }
 
     public String toString(){
-        return (state.isAI ? "AI" : "Player") + " node: " + " Score:( " + state.winScore + " , " + state.visitCount + " ) \n";
+        return (state.isAI ? "AI" : "Player") + " node: " + " Score:( " + state.winScore + " , " +
+                  state.visitCount + " )\t"+ "snake: (" + state.snake.peekFirst().getX()+", "+state.snake.peekFirst().getY() +
+                ") player snake: (" + state.playerSnake.peekFirst().getX() + ", " + state.playerSnake.peekFirst().getY()+")" + "\n";
     }
 
     public Node getChildWithMinMaxScore() {
@@ -64,14 +66,14 @@ public class Node {
         childX = child.state.snake.peekFirst().x;
         childY = child.state.snake.peekFirst().y;
         if(thisX == childX){
-            if(thisY == (childY + 1))
+            if(thisY > childY)
                 return Direction.North;
             else
                 return Direction.South;
         }
         else{
             // The same Y
-            if(thisX == (childX + 1))
+            if(thisX > childX + 1)
                 return Direction.West;
             else
                 return Direction.East;

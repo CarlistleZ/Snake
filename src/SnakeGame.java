@@ -1086,13 +1086,11 @@ public class SnakeGame extends JFrame {
 		setNanoTime();
 		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 100){
 			Node promisingNode = selectPromisingNode(rootNode);
-			if(!isGoal(promisingNode.state.snake)){
+			if(!isGoal(promisingNode.state.snake))
 				expandNode(promisingNode);
-			}
 			Node nodeToExplore = null;
-			if (promisingNode.childArray.size() > 0) {
+			if (promisingNode.childArray.size() > 0)
 				nodeToExplore = promisingNode.getRandomChildNode();
-			}
 			int playoutResult = simulateRandomPlayout(nodeToExplore);
 			backPropagation(nodeToExplore, playoutResult);
 			MCTSLoopCounter++;
@@ -1108,6 +1106,7 @@ public class SnakeGame extends JFrame {
 //		System.out.println("Going: " + dir);
 //		System.exit(0);
 		tree.setRoot(winnerNode);
+		tree.getRoot().parent = null;
 		goTowardsDirection(dir);
 	}
 
@@ -1117,11 +1116,13 @@ public class SnakeGame extends JFrame {
 	 * @return its best child node
 	 */
 	private Node selectPromisingNode(Node rootNode) {
+//		System.out.println("SELECTION:");
 		Node node = rootNode;
 		while (node.childArray.size() != 0) {
+//			System.out.print(node.state.isAI ? "AI " : "Player ");
 			// descend to the best child node
-			node = UCB.findBestNodeWithUCB(node);
-			System.out.println("chosen: " + node);
+			node = UCB.findBestNodeWithUCB(node, node.state.isAI);
+//			System.out.println("chose: " + node);
 		}
 		return node;
 	}
@@ -1131,29 +1132,35 @@ public class SnakeGame extends JFrame {
 	 * @param promisingNode
 	 */
 	private void expandNode(Node promisingNode) {
+//		System.out.println("EXPANSION:");
+//		System.out.println("On: " + promisingNode + "childArr: " + promisingNode.childArray.size());
 		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
+		promisingNode.childArray.clear();
 		for (State s: possibleStates){
 			Node neighborNode = new Node(s);
 			neighborNode.parent = promisingNode;
 			neighborNode.state.isAI = promisingNode.state.getOpponent();
+			neighborNode.state.visitCount = 0;
+			neighborNode.state.winScore = 0;
 			promisingNode.childArray.add(neighborNode);
 		}
+//		System.out.println("Expanded: " + promisingNode.childArray);
 	}
 
 
 	private int simulateRandomPlayout(Node node) {
-//		 System.out.println("Fruit at: (" + fruitX + ", " + fruitY + ")");
+//		 System.out.println("SIMULATION:");
 		Node tempNode = new Node(node);
+//		System.out.println("From: " + tempNode);
 		State tempState = tempNode.state;
 		int boardStatus = tempState.checkStatus();
 
 		while (boardStatus == State.IN_PROGRESS) {
-//			 System.out.println("Is AI? " + tempState.isAI + " ,simulating at: " +
-//					(tempState.isAI ? tempState.snake.peekFirst() : tempState.playerSnake.peekFirst()));
+//			System.out.println(tempState);
+//			System.out.println("BoardStatus: " + boardStatus);;
 			tempState = tempState.randomPlay();
 			tempState.togglePlayer();
 			boardStatus = tempState.checkStatus();
-//			System.out.println("BoardStatus: " + boardStatus);
 		}
 //		System.out.println("Simulation result for "+node.state+": " + boardStatus);
 		return boardStatus;
@@ -1165,7 +1172,8 @@ public class SnakeGame extends JFrame {
 	 * @param playoutResult
 	 */
 	private void backPropagation(Node nodeToExplore, int playoutResult) {
-//		System.out.println("Propagating from " + nodeToExplore.state+ "\twith value: " + playoutResult);
+//		System.out.println("\nBACK PROPAGATION:");
+//		System.out.println("Propagating from " + nodeToExplore+ "\twith value: " + playoutResult);
 		Node tempNode = nodeToExplore;
 		boolean isAINode = tempNode.state.isAI;
 		while (tempNode != null) {
