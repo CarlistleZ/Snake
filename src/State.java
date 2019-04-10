@@ -37,6 +37,12 @@ public class State {
         this.board = new BoardPanel(game);
     }
 
+    public String toString(){
+        return "State " + (isAI ? "AI" : "player") + " Score:( " + winScore + " , " + visitCount + " ) " +
+                "snake: (" + snake.peekFirst().getX()+", "+snake.peekFirst().getY() +
+                ") player snake: (" + playerSnake.peekFirst().getX() + ", " + playerSnake.peekFirst().getY()+")";
+    }
+
     boolean getOpponent() { return !isAI; }
 
     public List<State> getAllPossibleStates() {
@@ -90,8 +96,12 @@ public class State {
 
 
     void addScore(double score) {
-        if (this.winScore != Integer.MIN_VALUE)
+        if (this.winScore != Integer.MIN_VALUE) {
             this.winScore += score;
+        } else{
+            // The first time
+            this.winScore = score;
+        }
     }
 
     State randomPlay() {

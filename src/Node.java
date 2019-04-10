@@ -42,10 +42,20 @@ public class Node {
         return res;
     }
 
-    public Node getChildWithMaxScore() {
-        return Collections.max(this.childArray, Comparator.comparing(c -> {
-            return c.state.visitCount;
-        }));
+    public String toString(){
+        return (state.isAI ? "AI" : "Player") + " node: " + " Score:( " + state.winScore + " , " + state.visitCount + " ) \n";
+    }
+
+    public Node getChildWithMinMaxScore() {
+        if (state.isAI) {
+            return Collections.max(this.childArray, Comparator.comparing(c -> {
+                return c.state.visitCount;
+            }));
+        } else {
+            return Collections.min(this.childArray, Comparator.comparing(c -> {
+                return c.state.visitCount;
+            }));
+        }
     }
     public Direction getDirectionfromChild(Node child){
         int thisX, thisY, childX, childY;
