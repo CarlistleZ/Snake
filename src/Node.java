@@ -14,14 +14,8 @@ public class Node {
     }
 
     public Node(State state) {
-        this.state = state;
+        this.state = new State(state);
         childArray = new ArrayList<>();
-    }
-
-    public Node(State state, Node parent, List<Node> childArray) {
-        this.state = state;
-        this.parent = parent;
-        this.childArray = childArray;
     }
 
     public Node(Node node) {

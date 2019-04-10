@@ -31,12 +31,6 @@ public class State {
         this.winScore = state.winScore;
     }
 
-    public State(SnakeGame game) {
-        this.snake = new LinkedList<>();
-        this.playerSnake = new LinkedList<>();
-        this.board = new BoardPanel(game);
-    }
-
     public String toString(){
         return "State " + (isAI ? "AI" : "PLAYER") + " Score:( " + winScore + " , " + visitCount + " ) " +
                 "snake: (" + snake.peekFirst().getX()+", "+snake.peekFirst().getY() +
@@ -45,9 +39,9 @@ public class State {
 
     boolean getOpponent() { return !isAI; }
 
-    public List<State> getAllPossibleStates() {
+    public List<State> getAllPossibleStates(Node self) {
         List<State> possibleStates = new LinkedList<>();
-        possibleStates.addAll(neighbors(isAI ? snake : playerSnake));
+        possibleStates.addAll(neighbors((isAI ? snake : playerSnake)));
         return possibleStates;
     }
 

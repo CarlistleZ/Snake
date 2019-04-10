@@ -1086,6 +1086,9 @@ public class SnakeGame extends JFrame {
 		setNanoTime();
 		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 100){
 			Node promisingNode = selectPromisingNode(rootNode);
+			if( MCTSLoopCounter == 98){
+				boolean bl = true;
+			}
 			if(!isGoal(promisingNode.state.snake))
 				expandNode(promisingNode);
 			Node nodeToExplore = null;
@@ -1097,11 +1100,11 @@ public class SnakeGame extends JFrame {
 		}
 		// Return the best predictable direction so far
 		Node winnerNode = rootNode.getChildWithMinMaxScore();
-//		System.out.println("Root at: " + tree.root.state.snake.peekFirst());
-//		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
-//		for(Node child: rootNode.childArray){
-//			System.out.println("( " + child.state.winScore + " , " + child.state.visitCount + " )");
-//		}
+		System.out.println("Root at: " + tree.root.state.snake.peekFirst());
+		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
+		for(Node child: rootNode.childArray){
+			System.out.println("( " + child.state.winScore + " , " + child.state.visitCount + " )");
+		}
 		Direction dir = tree.root.getDirectionfromChild(winnerNode);
 //		System.out.println("Going: " + dir);
 //		System.exit(0);
@@ -1134,8 +1137,10 @@ public class SnakeGame extends JFrame {
 	private void expandNode(Node promisingNode) {
 //		System.out.println("EXPANSION:");
 //		System.out.println("On: " + promisingNode + "childArr: " + promisingNode.childArray.size());
-		List<State> possibleStates = promisingNode.state.getAllPossibleStates();
-		promisingNode.childArray.clear();
+		boolean bl = true;
+		List<State> possibleStates = promisingNode.state.getAllPossibleStates(promisingNode);
+		if(promisingNode.childArray.size() != 0)
+			return;
 		for (State s: possibleStates){
 			Node neighborNode = new Node(s);
 			neighborNode.parent = promisingNode;
@@ -1150,9 +1155,8 @@ public class SnakeGame extends JFrame {
 
 	private int simulateRandomPlayout(Node node) {
 //		 System.out.println("SIMULATION:");
-		Node tempNode = new Node(node);
 //		System.out.println("From: " + tempNode);
-		State tempState = tempNode.state;
+		State tempState = new State(node.state);
 		int boardStatus = tempState.checkStatus();
 
 		while (boardStatus == State.IN_PROGRESS) {
