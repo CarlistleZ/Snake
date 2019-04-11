@@ -461,8 +461,6 @@ public class SnakeGame extends JFrame {
 			 * If a cycle has elapsed on the logic timer, then update the game.
 			 */
 			if(logicTimer.hasElapsedCycle()) {
-				if (solverMode == SolverMode.MCTS)
-					mcts(new GameState(this, 0, getHeuristic(snake)), false);
 				checkActionList(snake.peekFirst());
 				updateGame(solverMode);
 			}
@@ -757,7 +755,9 @@ public class SnakeGame extends JFrame {
 //		}
 //		System.out.println("=======================");
 		TileType player_collision = updateSnake(player_snake, playerDirections);
-		
+
+		mcts(new GameState(this, 0, getHeuristic(snake)), false);
+
 		/*
 		 * Here we handle the different possible collisions.
 		 * 
@@ -1071,24 +1071,48 @@ public class SnakeGame extends JFrame {
 	private static Tree tree;
 
 	public void mcts(GameState gameState, boolean isStart) {
+		Node rootNode = null;
 		// Initialize from a snake game state
 		if (isStart){
 			tree = new Tree();
+			// Initialize root here
+			rootNode = tree.getRoot();
+			rootNode.state.board = board;
+			rootNode.state.snake = gameState.snake;
+			rootNode.state.playerSnake = gameState.player_snake;
+			rootNode.state.isAI = true;
+		} else {
+			/*
+			* Here is the state where we move down the tree according to what the
+			* player does during the last cycle.
+			*/
+			boolean assigned = false;
+			Node aaaaaNode = tree.getRoot();
+			List<Node> cArr = aaaaaNode.childArray;
+			boolean b = true;
+			for (Node node: tree.getRoot().childArray){
+				if ( (node.state.playerSnake.peekFirst().getX() == this.player_snake.peekFirst().getX()) &&
+						(node.state.playerSnake.peekFirst().getY() ==  this.player_snake.peekFirst().getY())){
+					tree.setRoot(node);
+					node.parent = null;
+					rootNode = tree.getRoot();
+					assigned = true;
+					break;
+				}
+			}
+			if(!assigned){
+				System.err.println("Can not assign a child node!");
+				System.exit(999);
+			}
 		}
-		// Initialize root here
-		Node rootNode = tree.getRoot();
-		rootNode.state.board = board;
-		rootNode.state.snake = gameState.snake;
-		rootNode.state.playerSnake = gameState.player_snake;
-		rootNode.state.isAI = true;
+
 
 		MCTSLoopCounter = 0;
-		setNanoTime();
-		while(/*haveTimeLeft() &&*/ MCTSLoopCounter < 1000){
-			Node promisingNode = selectPromisingNode(rootNode);
+		while(MCTSLoopCounter < 200){
 			if( MCTSLoopCounter == 98){
 				boolean bl = true;
 			}
+			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake))
 				expandNode(promisingNode);
 			Node nodeToExplore = null;
@@ -1100,17 +1124,29 @@ public class SnakeGame extends JFrame {
 		}
 		// Return the best predictable direction so far
 		Node winnerNode = rootNode.getChildWithMinMaxScore();
-		System.out.println("Root at: " + tree.root.state.snake.peekFirst());
-		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
-		for(Node child: rootNode.childArray){
-			System.out.println("( " + child.state.winScore + " , " + child.state.visitCount + " )");
-		}
+//		System.out.println("\n\nRoot at: " + tree.root.state.snake.peekFirst());
+//		System.out.println("Player at: " + player_snake.peekFirst());
+		SnakeGame.printBoard((int)snake.peekFirst().getX(), (int)snake.peekFirst().getY(), player_snake.peekFirst().x,
+				player_snake.peekFirst().y, fruitY, fruitY);
+//		System.out.println("Fruit at: " + fruitX + ", " + fruitY);
+//		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
+//		for(Node child: rootNode.childArray){
+//			System.out.println("( " + child.state.winScore + " , " + child.state.visitCount + " )");
+//		}
 		Direction dir = tree.root.getDirectionfromChild(winnerNode);
 //		System.out.println("Going: " + dir);
+//		Scanner scanner = new Scanner(System.in);
+//		scanner.nextLine();
 //		System.exit(0);
 		tree.setRoot(winnerNode);
-		tree.getRoot().parent = null;
+		rootNode = winnerNode;
+		rootNode.parent = null;
 		goTowardsDirection(dir);
+		/*
+		* Descend one level in the tree
+		* The root here is a player node, we are sure that the AI snake will go towards the assigned direction
+		* Have to descend again at the beginning of another call of MCTS and see what the player does later
+		* */
 	}
 
 	/**
@@ -1154,8 +1190,8 @@ public class SnakeGame extends JFrame {
 
 
 	private int simulateRandomPlayout(Node node) {
-//		 System.out.println("SIMULATION:");
-//		System.out.println("From: " + tempNode);
+//		 System.out.println("SIMULATION:\n\n\n");
+//		System.out.println("From: " + node);
 		State tempState = new State(node.state);
 		int boardStatus = tempState.checkStatus();
 
@@ -1206,4 +1242,25 @@ public class SnakeGame extends JFrame {
 		long currentTimeStamp = System.nanoTime();
 		return (nanoTimeStamp + 0.5 * clockFrequency / Math.pow(1.0, 9.0)) > currentTimeStamp;
 	}
+
+
+	static void printBoard(int aiX, int aiY, int pX, int pY,int fX, int fY){
+		System.out.println("===========================================");
+		for(int i = 0; i < 25; i++){
+			for(int j = 0; j < 25; j++){
+				if((i == aiX) && (j == aiY))
+					System.out.print("A");
+				else if((i == pX) && (j == pY))
+					System.out.print("P");
+				else if((i == fX) && (j == fY))
+					System.out.print("F");
+				else
+					System.out.print(" ");
+			}
+			System.out.println();
+		}
+		System.out.println("===========================================");
+	}
 }
+
+
