@@ -1086,6 +1086,14 @@ public class SnakeGame extends JFrame {
 			* Here is the state where we move down the tree according to what the
 			* player does during the last cycle.
 			*/
+			//
+//			if((gameState.player_snake.peekFirst().getX()!=tree.getRoot().state.playerSnake.peekFirst().getX()) ||
+//					(gameState.player_snake.peekFirst().getY()!=tree.getRoot().state.playerSnake.peekFirst().getY()) ){
+//				System.err.println("Inconsistent state!");
+//				System.exit(999);
+//			}
+			System.out.println("Player snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
+			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
 			boolean assigned = false;
 			Node aaaaaNode = tree.getRoot();
 			List<Node> cArr = aaaaaNode.childArray;
@@ -1126,8 +1134,8 @@ public class SnakeGame extends JFrame {
 		Node winnerNode = rootNode.getChildWithMinMaxScore();
 //		System.out.println("\n\nRoot at: " + tree.root.state.snake.peekFirst());
 //		System.out.println("Player at: " + player_snake.peekFirst());
-		SnakeGame.printBoard((int)snake.peekFirst().getX(), (int)snake.peekFirst().getY(), player_snake.peekFirst().x,
-				player_snake.peekFirst().y, fruitY, fruitY);
+//		SnakeGame.printBoard((int)snake.peekFirst().getX(), (int)snake.peekFirst().getY(), player_snake.peekFirst().x,
+//				player_snake.peekFirst().y, fruitY, fruitY);
 //		System.out.println("Fruit at: " + fruitX + ", " + fruitY);
 //		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
 //		for(Node child: rootNode.childArray){
