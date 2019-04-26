@@ -24,9 +24,11 @@ public class SnakeGame extends JFrame {
 		GameState(SnakeGame snakeGame, int moves, int priority){
 			board = snakeGame.board;
 			snake = new LinkedList<>();
-			player_snake = new LinkedList<>();
+			if (snakeGame.mode == SolverMode.MCTS)
+				player_snake = new LinkedList<>();
 			snake = (LinkedList<Point>) snakeGame.snake.clone();
-			player_snake = (LinkedList<Point>) snakeGame.player_snake.clone();
+			if (snakeGame.mode == SolverMode.MCTS)
+				player_snake = (LinkedList<Point>) snakeGame.player_snake.clone();
 			this.moves = moves;
 			this.parent = null;
 			this.priority = priority;
@@ -38,10 +40,12 @@ public class SnakeGame extends JFrame {
 			board = parent.board;
 			// snake = new LinkedList<>(snakeGame.snake);
 			snake = new LinkedList<>();
-			player_snake = new LinkedList<>();
+			if (SnakeGame.mode == SolverMode.MCTS)
+				player_snake = new LinkedList<>();
 			snake = (LinkedList<Point>) parent.snake.clone();
-            player_snake = (LinkedList<Point>)parent.player_snake.clone();
-            this.moves = moves;
+			if (SnakeGame.mode == SolverMode.MCTS)
+				player_snake = (LinkedList<Point>)parent.player_snake.clone();
+			this.moves = moves;
 			this.parent = parent;
 			this.priority = priority;
 			x = snake.peekFirst().x;
@@ -54,8 +58,8 @@ public class SnakeGame extends JFrame {
 			snake = new LinkedList<>();
 			snake = (LinkedList<Point>) parent.snake.clone();
 			player_snake = new LinkedList<>();
-            player_snake = (LinkedList<Point>) parent.player_snake.clone();
-            this.moves = 0;
+			player_snake = (LinkedList<Point>) parent.player_snake.clone();
+			this.moves = 0;
 			this.parent = parent;
 			this.priority = 0;
 			x = snake.peekFirst().x;
@@ -90,55 +94,55 @@ public class SnakeGame extends JFrame {
 	 * The number of milliseconds that should pass between each frame.
 	 */
 	private static final long FRAME_TIME = 1000L / 50L;
-	
+
 	/**
 	 * The minimum length of the snake. This allows the snake to grow
 	 * right when the game starts, so that we're not just a head moving
 	 * around on the board.
 	 */
 	private static final int MIN_SNAKE_LENGTH = 5;
-	
+
 	/**
 	 * The maximum number of directions that we can have polled in the
 	 * direction list.
 	 */
 	private static final int MAX_DIRECTIONS = 3;
-	
+
 	/**
 	 * The BoardPanel instance.
 	 */
 	private BoardPanel board;
-	
+
 	/**
 	 * The SidePanel instance.
 	 */
 	private SidePanel side;
-	
+
 	/**
 	 * The random number generator (used for spawning fruits).
 	 */
 	private Random random;
-	
+
 	/**
 	 * The Clock instance for handling the game logic.
 	 */
 	private Clock logicTimer;
-	
+
 	/**
 	 * Whether or not we're running a new game.
 	 */
 	private boolean isNewGame;
-		
+
 	/**
 	 * Whether or not the game is over.
 	 */
 	private boolean isGameOver;
-	
-	/**	
+
+	/**
 	 * Whether or not the game is paused.
 	 */
 	private boolean isPaused;
-	
+
 	/**
 	 * The list that contains the points for the snake.
 	 */
@@ -149,17 +153,17 @@ public class SnakeGame extends JFrame {
 	 */
 	private LinkedList<Direction> directions;
 	private LinkedList<Direction> playerDirections;
-	
+
 	/**
 	 * The current moves.
 	 */
 	private int score;
-	
+
 	/**
 	 * The number of fruits that we've eaten.
 	 */
 	private int fruitsEaten;
-	
+
 	/**
 	 * The number of points that the next fruit will award us.
 	 */
@@ -186,7 +190,7 @@ public class SnakeGame extends JFrame {
 	 */
 	boolean visitedArr[][];
 
-    boolean have_time_left;
+	static SolverMode mode;
 
 	/**
 	 *
@@ -210,98 +214,98 @@ public class SnakeGame extends JFrame {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-				
+
 		/*
 		 * Initialize the game's panels and add them to the window.
 		 */
 		this.board = new BoardPanel(this);
 		this.side = new SidePanel(this);
-		
+
 		add(board, BorderLayout.CENTER);
 		add(side, BorderLayout.EAST);
-		
+
 		/*
-		 * Adds a new key listener to the frame to process input. 
+		 * Adds a new key listener to the frame to process input.
 		 */
 		addKeyListener(new KeyAdapter() {
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				switch(e.getKeyCode()) {
 
-				/*
-				 * If the game is not paused, and the game is not over...
-				 * 
-				 * Ensure that the direction list is not full, and that the most
-				 * recent direction is adjacent to North before adding the
-				 * direction to the list.
-				 */
-				case KeyEvent.VK_W:
-				case KeyEvent.VK_UP:
-					goNorth();
-					break;
+					/*
+					 * If the game is not paused, and the game is not over...
+					 *
+					 * Ensure that the direction list is not full, and that the most
+					 * recent direction is adjacent to North before adding the
+					 * direction to the list.
+					 */
+					case KeyEvent.VK_W:
+					case KeyEvent.VK_UP:
+						goNorth();
+						break;
 
-				/*
-				 * If the game is not paused, and the game is not over...
-				 * 
-				 * Ensure that the direction list is not full, and that the most
-				 * recent direction is adjacent to South before adding the
-				 * direction to the list.
-				 */	
-				case KeyEvent.VK_S:
-				case KeyEvent.VK_DOWN:
-					goSouth();
-					break;
-				
-				/*
-				 * If the game is not paused, and the game is not over...
-				 * 
-				 * Ensure that the direction list is not full, and that the most
-				 * recent direction is adjacent to West before adding the
-				 * direction to the list.
-				 */						
-				case KeyEvent.VK_A:
-				case KeyEvent.VK_LEFT:
-					goWest();
-					break;
-			
-				/*
-				 * If the game is not paused, and the game is not over...
-				 * 
-				 * Ensure that the direction list is not full, and that the most
-				 * recent direction is adjacent to East before adding the
-				 * direction to the list.
-				 */		
-				case KeyEvent.VK_D:
-				case KeyEvent.VK_RIGHT:
-					goEast();
-					break;
-				
-				/*
-				 * If the game is not over, toggle the paused flag and update
-				 * the logicTimer's pause flag accordingly.
-				 */
-				case KeyEvent.VK_SPACE:
-				case KeyEvent.VK_P:
-					if(!isGameOver) {
-						isPaused = !isPaused;
-						logicTimer.setPaused(isPaused);
-					}
-					break;
-				
-				/*
-				 * Reset the game if one is not currently in progress.
-				 */
-				case KeyEvent.VK_ENTER:
-					if(isNewGame || isGameOver) {
-						resetGame(solverMode);
-					}
-					break;
+					/*
+					 * If the game is not paused, and the game is not over...
+					 *
+					 * Ensure that the direction list is not full, and that the most
+					 * recent direction is adjacent to South before adding the
+					 * direction to the list.
+					 */
+					case KeyEvent.VK_S:
+					case KeyEvent.VK_DOWN:
+						goSouth();
+						break;
+
+					/*
+					 * If the game is not paused, and the game is not over...
+					 *
+					 * Ensure that the direction list is not full, and that the most
+					 * recent direction is adjacent to West before adding the
+					 * direction to the list.
+					 */
+					case KeyEvent.VK_A:
+					case KeyEvent.VK_LEFT:
+						goWest();
+						break;
+
+					/*
+					 * If the game is not paused, and the game is not over...
+					 *
+					 * Ensure that the direction list is not full, and that the most
+					 * recent direction is adjacent to East before adding the
+					 * direction to the list.
+					 */
+					case KeyEvent.VK_D:
+					case KeyEvent.VK_RIGHT:
+						goEast();
+						break;
+
+					/*
+					 * If the game is not over, toggle the paused flag and update
+					 * the logicTimer's pause flag accordingly.
+					 */
+					case KeyEvent.VK_SPACE:
+					case KeyEvent.VK_P:
+						if(!isGameOver) {
+							isPaused = !isPaused;
+							logicTimer.setPaused(isPaused);
+						}
+						break;
+
+					/*
+					 * Reset the game if one is not currently in progress.
+					 */
+					case KeyEvent.VK_ENTER:
+						if(isNewGame || isGameOver) {
+							resetGame(solverMode);
+						}
+						break;
 				}
 			}
-			
+
 		});
-		
+
 		/*
 		 * Resize the window to the appropriate size, center it on the
 		 * screen and display it.
@@ -309,6 +313,11 @@ public class SnakeGame extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
+	}
+
+	public String toString(){
+		return "SnakeGame: player:("+player_snake.peekFirst().x +","+player_snake.peekFirst().y +
+				")  AI:("+snake.peekFirst().x +","+snake.peekFirst().y +")";
 	}
 
 	private void goTowardsDirection(Direction dir){
@@ -409,7 +418,7 @@ public class SnakeGame extends JFrame {
 			if(directions.size() < MAX_DIRECTIONS) {
 				Direction last = directions.peekLast();
 				if((last != Direction.East && last != Direction.West) &&
-						(board.getTile(snake.peekFirst().x,snake.peekFirst().y) != TileType.SnakeBody)) {
+						(board.getTile(snake.peekFirst().x - 1,snake.peekFirst().y) != TileType.SnakeBody)) {
 					directions.addLast(Direction.West);
 				}
 			}
@@ -436,12 +445,14 @@ public class SnakeGame extends JFrame {
 		 */
 		this.random = new Random();
 		this.snake = new LinkedList<>();
-		this.player_snake = new LinkedList<>();
+		if (solverMode == SolverMode.MCTS)
+			this.player_snake = new LinkedList<>();
 		this.directions = new LinkedList<>();
 		this.logicTimer = new Clock(clockFrequency);
 		this.isNewGame = true;
 		this.directionMap = new HashMap<>();
-		this.playerDirections = new LinkedList<>();
+		if (solverMode == SolverMode.MCTS)
+			this.playerDirections = new LinkedList<>();
 
 		//Set the timer to paused initially.
 		logicTimer.setPaused(true);
@@ -520,7 +531,7 @@ public class SnakeGame extends JFrame {
 		// Construct path from states
 		// Generate an action list: a list of directions at (x, y)
 
-		 //Clear the directions
+		//Clear the directions
 		int secondLastX = 0, secondLastY = 0;
 		directions.clear();
 		directionMap = new HashMap<>();
@@ -744,29 +755,24 @@ public class SnakeGame extends JFrame {
 	 */
 	private void updateGame(SolverMode solverMode) {
 		/*
-		 * Gets the type of tile that the head of the snake collided with. If 
+		 * Gets the type of tile that the head of the snake collided with. If
 		 * the snake hit a wall, SnakeBody will be returned, as both conditions
 		 * are handled identically.
 		 */
 		TileType collision = updateSnake(snake,directions);
-//		System.out.println("====Updating player snake ====");
-//		for(Direction d:playerDirections){
-//			System.out.println(d);
-//		}
-//		System.out.println("=======================");
-		TileType player_collision = updateSnake(player_snake, playerDirections);
 
-		mcts(new GameState(this, 0, getHeuristic(snake)), false);
-
+		TileType player_collision = null;
+		if (solverMode == SolverMode.MCTS)
+			updateSnake(player_snake, playerDirections);
 		/*
 		 * Here we handle the different possible collisions.
-		 * 
+		 *
 		 * Fruit: If we collided with a fruit, we increment the number of
 		 * fruits that we've eaten, update the moves, and spawn a new fruit.
-		 * 
+		 *
 		 * SnakeBody: If we collided with our tail (or a wall), we flag that
 		 * the game is over and pause the game.
-		 * 
+		 *
 		 * If no collision occurred, we simply decrement the number of points
 		 * that the next fruit will give us if it's high enough. This adds a
 		 * bit of skill to the game as collecting fruits more quickly will
@@ -776,16 +782,19 @@ public class SnakeGame extends JFrame {
 			fruitsEaten++;
 			score += nextFruitScore;
 			spawnFruit(solverMode);
-		} else if(collision == TileType.SnakeBody || player_collision == TileType.SnakeBody) {
+		} else if(collision == TileType.SnakeBody || (solverMode == SolverMode.MCTS && player_collision == TileType.SnakeBody)) {
 			isGameOver = true;
 			logicTimer.setPaused(true);
 		} else if(nextFruitScore > 10) {
 			nextFruitScore--;
 		}
-		if(player_collision == TileType.Fruit) {
+		if(solverMode == SolverMode.MCTS && player_collision == TileType.Fruit) {
 			fruitsEaten++;
 			score += nextFruitScore;
 			spawnFruit(solverMode);
+		} else {
+			if (solverMode == SolverMode.MCTS)
+				mcts(new GameState(this, 0, getHeuristic(snake)), false);
 		}
 	}
 
@@ -812,26 +821,26 @@ public class SnakeGame extends JFrame {
 		/*
 		 * Here we calculate the new point that the snake's head will be at
 		 * after the update.
-		 */		
+		 */
 		Point head = new Point(snake_update.peekFirst());
 		switch(direction) {
-		case North:
-			head.y--;
-			break;
-			
-		case South:
-			head.y++;
-			break;
-			
-		case West:
-			head.x--;
-			break;
-			
-		case East:
-			head.x++;
-			break;
+			case North:
+				head.y--;
+				break;
+
+			case South:
+				head.y++;
+				break;
+
+			case West:
+				head.x--;
+				break;
+
+			case East:
+				head.x++;
+				break;
 		}
-		
+
 		/*
 		 * If the snake has moved out of bounds ('hit' a wall), we can just
 		 * return that it's collided with itself, as both cases are handled
@@ -840,12 +849,12 @@ public class SnakeGame extends JFrame {
 		if(head.x < 0 || head.x >= BoardPanel.COL_COUNT || head.y < 0 || head.y >= BoardPanel.ROW_COUNT) {
 			return TileType.SnakeBody; //Pretend we collided with our body.
 		}
-		
+
 		/*
 		 * Here we get the tile that was located at the new head position and
 		 * remove the tail from of the snake and the board if the snake is
 		 * long enough, and the tile it moved onto is not a fruit.
-		 * 
+		 *
 		 * If the tail was removed, we need to retrieve the old tile again
 		 * increase the tile we hit was the tail piece that was just removed
 		 * to prevent a false game over.
@@ -856,15 +865,15 @@ public class SnakeGame extends JFrame {
 			board.setTile(tail, null);
 			old = board.getTile(head.x, head.y);
 		}
-		
+
 		/*
 		 * Update the snake's position on the board if we didn't collide with
 		 * our tail:
-		 * 
+		 *
 		 * 1. Set the old head position to a body tile.
 		 * 2. Add the new head to the snake.
 		 * 3. Set the new head position to a head tile.
-		 * 
+		 *
 		 * If more than one direction is in the queue, poll it to read new
 		 * input.
 		 */
@@ -876,7 +885,7 @@ public class SnakeGame extends JFrame {
 				list_direction.poll();
 			}
 		}
-				
+
 		return old;
 	}
 
@@ -890,35 +899,37 @@ public class SnakeGame extends JFrame {
 		 */
 		this.score = 0;
 		this.fruitsEaten = 0;
-		
+
 		/*
 		 * Reset both the new game and game over flags.
 		 */
 		this.isNewGame = false;
 		this.isGameOver = false;
-		
+
 		/*
 		 * Create the head at the center of the board.
 		 */
 		Point head = new Point(BoardPanel.COL_COUNT / 2, BoardPanel.ROW_COUNT / 2);
-		Point player_head = new Point(3,3);
-
+		Point player_head = null;
+		if (solverMode == SolverMode.MCTS)
+			new Point(3,3);
 		/*
 		 * Clear the snake list and add the head.
 		 */
 		snake.clear();
 		snake.add(head);
-
-		player_snake.clear();
-		player_snake.add(player_head);
-		playerDirections.addLast(Direction.East);
-		
+		if (solverMode == SolverMode.MCTS){
+			player_snake.clear();
+			player_snake.add(player_head);
+			playerDirections.addLast(Direction.East);
+		}
 		/*
 		 * Clear the board and add the head.
 		 */
 		board.clearBoard();
 		board.setTile(head, TileType.SnakeHead);
-		board.setTile(player_head,TileType.SnakeHead);
+		if (solverMode == SolverMode.MCTS)
+			board.setTile(player_head,TileType.SnakeHead);
 		/*
 		 * Reset the logic timer.
 		 */
@@ -939,7 +950,7 @@ public class SnakeGame extends JFrame {
 	public boolean isNewGame() {
 		return isNewGame;
 	}
-	
+
 	/**
 	 * Gets the flag that indicates whether or not the game is over.
 	 * @return The game over flag.
@@ -947,7 +958,7 @@ public class SnakeGame extends JFrame {
 	public boolean isGameOver() {
 		return isGameOver;
 	}
-	
+
 	/**
 	 * Gets the flag that indicates whether or not the game is paused.
 	 * @return The paused flag.
@@ -963,7 +974,7 @@ public class SnakeGame extends JFrame {
 	public int getHeuristic(LinkedList<Point> snake){
 		return Math.abs(snake.peekFirst().x - fruitX) + Math.abs(snake.peekFirst().y - fruitY);
 	}
-	
+
 	/**
 	 * Spawns a new fruit onto the board.
 	 */
@@ -977,12 +988,12 @@ public class SnakeGame extends JFrame {
 		 * Get a random index based on the number of free spaces left on the board.
 		 */
 		int index = random.nextInt(BoardPanel.COL_COUNT * BoardPanel.ROW_COUNT - snake.size());
-		
+
 		/*
 		 * While we could just as easily choose a random index on the board
 		 * and check it if it's free until we find an empty one, that method
 		 * tends to hang if the snake becomes very large.
-		 * 
+		 *
 		 * This method simply loops through until it finds the nth free index
 		 * and selects uses that. This means that the game will be able to
 		 * locate an index at a relatively constant rate regardless of the
@@ -1019,7 +1030,7 @@ public class SnakeGame extends JFrame {
 				break;
 		}
 	}
-	
+
 	/**
 	 * Gets the current moves.
 	 * @return The moves.
@@ -1027,7 +1038,7 @@ public class SnakeGame extends JFrame {
 	public int getScore() {
 		return score;
 	}
-	
+
 	/**
 	 * Gets the number of fruits eaten.
 	 * @return The fruits eaten.
@@ -1035,7 +1046,7 @@ public class SnakeGame extends JFrame {
 	public int getFruitsEaten() {
 		return fruitsEaten;
 	}
-	
+
 	/**
 	 * Gets the next fruit moves.
 	 * @return The next fruit moves.
@@ -1043,7 +1054,7 @@ public class SnakeGame extends JFrame {
 	public int getNextFruitScore() {
 		return nextFruitScore;
 	}
-	
+
 	/**
 	 * Gets the current direction of the snake.
 	 * @return The current direction.
@@ -1051,10 +1062,11 @@ public class SnakeGame extends JFrame {
 	public Direction getDirection() {
 		return directions.peek();
 	}
-	
+
 
 	public static void main(String[] args) {
-		SolverMode solverMode = SolverMode.MCTS;
+		SolverMode solverMode = SolverMode.idAstar;
+		SnakeGame.mode = solverMode;
 		SnakeGame snake = new SnakeGame(solverMode);
 		snake.startGamePlayer(solverMode);
 	}
@@ -1064,7 +1076,7 @@ public class SnakeGame extends JFrame {
 	 *  -------------------------------------------------------------------------------------------
 	 *  *****************************  Monte Carlo Tree Search (MCTS) *****************************
 	 *  -------------------------------------------------------------------------------------------
-     */
+	 */
 
 	// counter for mcts test
 	private int MCTSLoopCounter;
@@ -1083,21 +1095,18 @@ public class SnakeGame extends JFrame {
 			rootNode.state.isAI = true;
 		} else {
 			/*
-			* Here is the state where we move down the tree according to what the
-			* player does during the last cycle.
-			*/
+			 * Here is the state where we move down the tree according to what the
+			 * player does during the last cycle.
+			 */
 			//
-//			if((gameState.player_snake.peekFirst().getX()!=tree.getRoot().state.playerSnake.peekFirst().getX()) ||
-//					(gameState.player_snake.peekFirst().getY()!=tree.getRoot().state.playerSnake.peekFirst().getY()) ){
-//				System.err.println("Inconsistent state!");
-//				System.exit(999);
-//			}
-			System.out.println("Player snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
+			if(!gameState.player_snake.peekFirst().equals(tree.getRoot().state.playerSnake.peekFirst())){
+				System.err.println("Inconsistent state!");
+				System.exit(999);
+			}
+			System.out.println("\nPlayer snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
 			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
 			boolean assigned = false;
 			Node aaaaaNode = tree.getRoot();
-			List<Node> cArr = aaaaaNode.childArray;
-			boolean b = true;
 			for (Node node: tree.getRoot().childArray){
 				if ( (node.state.playerSnake.peekFirst().getX() == this.player_snake.peekFirst().getX()) &&
 						(node.state.playerSnake.peekFirst().getY() ==  this.player_snake.peekFirst().getY())){
@@ -1114,7 +1123,7 @@ public class SnakeGame extends JFrame {
 			}
 		}
 
-
+		System.out.println("State: " + rootNode.state);
 		MCTSLoopCounter = 0;
 		while(MCTSLoopCounter < 200){
 			if( MCTSLoopCounter == 98){
@@ -1132,29 +1141,17 @@ public class SnakeGame extends JFrame {
 		}
 		// Return the best predictable direction so far
 		Node winnerNode = rootNode.getChildWithMinMaxScore();
-//		System.out.println("\n\nRoot at: " + tree.root.state.snake.peekFirst());
-//		System.out.println("Player at: " + player_snake.peekFirst());
-//		SnakeGame.printBoard((int)snake.peekFirst().getX(), (int)snake.peekFirst().getY(), player_snake.peekFirst().x,
-//				player_snake.peekFirst().y, fruitY, fruitY);
-//		System.out.println("Fruit at: " + fruitX + ", " + fruitY);
-//		System.out.println("Winner node at: " + winnerNode.state.snake.peekFirst());
-//		for(Node child: rootNode.childArray){
-//			System.out.println("( " + child.state.winScore + " , " + child.state.visitCount + " )");
-//		}
 		Direction dir = tree.root.getDirectionfromChild(winnerNode);
-//		System.out.println("Going: " + dir);
-//		Scanner scanner = new Scanner(System.in);
-//		scanner.nextLine();
-//		System.exit(0);
 		tree.setRoot(winnerNode);
 		rootNode = winnerNode;
 		rootNode.parent = null;
 		goTowardsDirection(dir);
+		System.out.println("Direction: " + dir + "\n");
 		/*
-		* Descend one level in the tree
-		* The root here is a player node, we are sure that the AI snake will go towards the assigned direction
-		* Have to descend again at the beginning of another call of MCTS and see what the player does later
-		* */
+		 * Descend one level in the tree
+		 * The root here is a player node, we are sure that the AI snake will go towards the assigned direction
+		 * Have to descend again at the beginning of another call of MCTS and see what the player does later
+		 * */
 	}
 
 	/**
@@ -1236,39 +1233,19 @@ public class SnakeGame extends JFrame {
 //		System.out.println();
 	}
 
-	private static long nanoTimeStamp;
-	private void setNanoTime(){
-		nanoTimeStamp = System.nanoTime();
-	}
-
-	/**
-	 * Method used in the mcts loop to check if time has ran out in one interval
-	 * @return if there's time left until the next update
-	 */
-	public boolean haveTimeLeft(){
-		// TODO
-		long currentTimeStamp = System.nanoTime();
-		return (nanoTimeStamp + 0.5 * clockFrequency / Math.pow(1.0, 9.0)) > currentTimeStamp;
-	}
-
-
-	static void printBoard(int aiX, int aiY, int pX, int pY,int fX, int fY){
-		System.out.println("===========================================");
-		for(int i = 0; i < 25; i++){
-			for(int j = 0; j < 25; j++){
-				if((i == aiX) && (j == aiY))
-					System.out.print("A");
-				else if((i == pX) && (j == pY))
-					System.out.print("P");
-				else if((i == fX) && (j == fY))
-					System.out.print("F");
-				else
-					System.out.print(" ");
-			}
-			System.out.println();
-		}
-		System.out.println("===========================================");
-	}
+//	private static long nanoTimeStamp;
+//	private void setNanoTime(){
+//		nanoTimeStamp = System.nanoTime();
+//	}
+//
+//	/**
+//	 * Method used in the mcts loop to check if time has ran out in one interval
+//	 * @return if there's time left until the next update
+//	 */
+//	public boolean haveTimeLeft(){
+//		long currentTimeStamp = System.nanoTime();
+//		return (nanoTimeStamp + 0.5 * clockFrequency / Math.pow(1.0, 9.0)) > currentTimeStamp;
+//	}
 }
 
 
