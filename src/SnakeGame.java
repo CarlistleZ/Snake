@@ -912,7 +912,7 @@ public class SnakeGame extends JFrame {
 		Point head = new Point(BoardPanel.COL_COUNT / 2, BoardPanel.ROW_COUNT / 2);
 		Point player_head = null;
 		if (solverMode == SolverMode.MCTS)
-			new Point(3,3);
+			player_head = new Point(3,3);
 		/*
 		 * Clear the snake list and add the head.
 		 */
@@ -1064,8 +1064,8 @@ public class SnakeGame extends JFrame {
 	}
 
 
-	public static void main(String[] args) {
-		SolverMode solverMode = SolverMode.idAstar;
+	public static void main(String []args) {
+		SolverMode solverMode = SolverMode.MCTS;
 		SnakeGame.mode = solverMode;
 		SnakeGame snake = new SnakeGame(solverMode);
 		snake.startGamePlayer(solverMode);
@@ -1083,9 +1083,10 @@ public class SnakeGame extends JFrame {
 	private static Tree tree;
 
 	public void mcts(GameState gameState, boolean isStart) {
+		System.out.println("AI snake at: " + gameState.snake.peekFirst());
 		Node rootNode = null;
 		// Initialize from a snake game state
-		if (isStart){
+		if (true){
 			tree = new Tree();
 			// Initialize root here
 			rootNode = tree.getRoot();
@@ -1106,7 +1107,6 @@ public class SnakeGame extends JFrame {
 			System.out.println("\nPlayer snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
 			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
 			boolean assigned = false;
-			Node aaaaaNode = tree.getRoot();
 			for (Node node: tree.getRoot().childArray){
 				if ( (node.state.playerSnake.peekFirst().getX() == this.player_snake.peekFirst().getX()) &&
 						(node.state.playerSnake.peekFirst().getY() ==  this.player_snake.peekFirst().getY())){
@@ -1123,7 +1123,7 @@ public class SnakeGame extends JFrame {
 			}
 		}
 
-		System.out.println("State: " + rootNode.state);
+//		System.out.println("State: " + rootNode.state);
 		MCTSLoopCounter = 0;
 		while(MCTSLoopCounter < 200){
 			if( MCTSLoopCounter == 98){
@@ -1220,13 +1220,9 @@ public class SnakeGame extends JFrame {
 //		System.out.println("\nBACK PROPAGATION:");
 //		System.out.println("Propagating from " + nodeToExplore+ "\twith value: " + playoutResult);
 		Node tempNode = nodeToExplore;
-		boolean isAINode = tempNode.state.isAI;
 		while (tempNode != null) {
 			tempNode.state.visitCount++;
-			if(tempNode.state.isAI == isAINode)
-				tempNode.state.addScore(playoutResult);
-			else
-				tempNode.state.addScore(-playoutResult);
+			tempNode.state.addScore( tempNode.state.isAI ? playoutResult : -playoutResult);
 //			System.out.println("\tPropagating from " + tempNode.state+ "\twith value: " + playoutResult);
 			tempNode = tempNode.parent;
 		}

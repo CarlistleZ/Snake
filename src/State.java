@@ -128,13 +128,10 @@ public class State {
             return isAI ? PLAYER_WIN : AI_WIN;
         }else if(snakeToCheck.peekFirst().x == board.fruitX && snakeToCheck.peekFirst().y == board.fruitY){
             return isAI ? AI_WIN : PLAYER_WIN;
-        } else if(board.getTile(snakeToCheck.peekFirst()) == TileType.SnakeBody) {
+        } /*else if(board.getTile(snakeToCheck.peekFirst()) == TileType.SnakeBody) {
             return isAI ? PLAYER_WIN : AI_WIN;
-        } else {
+        }*/ else {
             return IN_PROGRESS;
         }
-    }
-    public Point getRightSnakeHead(){
-        return isAI ? snake.peekFirst() : playerSnake.peekFirst();
     }
 }
