@@ -317,7 +317,8 @@ public class SnakeGame extends JFrame {
 
 	public String toString(){
 		return "SnakeGame: player:("+player_snake.peekFirst().x +","+player_snake.peekFirst().y +
-				")  AI:("+snake.peekFirst().x +","+snake.peekFirst().y +")";
+				")  AI:("+snake.peekFirst().x +","+snake.peekFirst().y +
+				" Fruit: (" + fruitX + ", " + fruitY + ")";
 	}
 
 	private void goTowardsDirection(Direction dir){
@@ -1064,8 +1065,8 @@ public class SnakeGame extends JFrame {
 	}
 
 
-	public static void main(String []args) {
-		SolverMode solverMode = SolverMode.MCTS;
+	public static void startGame(SolverMode solverMode) {
+//		SolverMode solverMode = SolverMode.MCTS;
 		SnakeGame.mode = solverMode;
 		SnakeGame snake = new SnakeGame(solverMode);
 		snake.startGamePlayer(solverMode);
