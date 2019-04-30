@@ -27,8 +27,8 @@ public class Main {
             }
         });
 
-        JRadioButton b3=new JRadioButton("MCTS");
-        b3.setBounds(35,130,95,30);
+        JRadioButton b3=new JRadioButton("MCTS (Beta...)");
+        b3.setBounds(35,130,155,30);
         b3.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 solverMode = SolverMode.MCTS;

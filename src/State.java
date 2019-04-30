@@ -128,10 +128,45 @@ public class State {
             return isAI ? PLAYER_WIN : AI_WIN;
         }else if(snakeToCheck.peekFirst().x == board.fruitX && snakeToCheck.peekFirst().y == board.fruitY){
             return isAI ? AI_WIN : PLAYER_WIN;
-        } /*else if(board.getTile(snakeToCheck.peekFirst()) == TileType.SnakeBody) {
+        }else if(onSnakes(isAI, snakeToCheck.peekFirst())) {
             return isAI ? PLAYER_WIN : AI_WIN;
-        }*/ else {
+        }else {
             return IN_PROGRESS;
+        }
+    }
+
+    /*
+     * Checks if the headToCheck overlaps any snake body
+     */
+    private boolean onSnakes(Boolean isAI, Point headToCheck){
+        if(isAI){
+            for(Point p : this.snake){
+                if (p == headToCheck){
+                    continue;
+                } else {
+                    if(p.equals(headToCheck))
+                        return true;
+                }
+            }
+            for(Point p : this.playerSnake){
+                if(p.equals(headToCheck))
+                    return true;
+            }
+            return false;
+        }else{
+            for(Point p : this.playerSnake){
+                if (p == headToCheck){
+                    continue;
+                } else {
+                    if(p.equals(headToCheck))
+                        return true;
+                }
+            }
+            for(Point p : this.snake){
+                if(p.equals(headToCheck))
+                    return true;
+            }
+            return false;
         }
     }
 }

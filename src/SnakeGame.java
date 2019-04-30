@@ -318,7 +318,7 @@ public class SnakeGame extends JFrame {
 	public String toString(){
 		return "SnakeGame: player:("+player_snake.peekFirst().x +","+player_snake.peekFirst().y +
 				")  AI:("+snake.peekFirst().x +","+snake.peekFirst().y +
-				" Fruit: (" + fruitX + ", " + fruitY + ")";
+				") Fruit: (" + fruitX + ", " + fruitY + ")";
 	}
 
 	private void goTowardsDirection(Direction dir){
@@ -1084,7 +1084,8 @@ public class SnakeGame extends JFrame {
 	private static Tree tree;
 
 	public void mcts(GameState gameState, boolean isStart) {
-		System.out.println("AI snake at: " + gameState.snake.peekFirst());
+//		System.out.println("AI snake at: " + gameState.snake.peekFirst());
+		System.out.println(this);
 		Node rootNode = null;
 		// Initialize from a snake game state
 		if (true){
@@ -1100,8 +1101,7 @@ public class SnakeGame extends JFrame {
 			 * Here is the state where we move down the tree according to what the
 			 * player does during the last cycle.
 			 */
-			//
-			if(!gameState.player_snake.peekFirst().equals(tree.getRoot().state.playerSnake.peekFirst())){
+			if(!gameState.snake.peekFirst().equals(tree.getRoot().state.snake.peekFirst())){
 				System.err.println("Inconsistent state!");
 				System.exit(999);
 			}
@@ -1109,8 +1109,7 @@ public class SnakeGame extends JFrame {
 			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
 			boolean assigned = false;
 			for (Node node: tree.getRoot().childArray){
-				if ( (node.state.playerSnake.peekFirst().getX() == this.player_snake.peekFirst().getX()) &&
-						(node.state.playerSnake.peekFirst().getY() ==  this.player_snake.peekFirst().getY())){
+				if ( (node.state.playerSnake.peekFirst().equals(this.player_snake.peekFirst()))){
 					tree.setRoot(node);
 					node.parent = null;
 					rootNode = tree.getRoot();
@@ -1133,7 +1132,7 @@ public class SnakeGame extends JFrame {
 			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake))
 				expandNode(promisingNode);
-			Node nodeToExplore = null;
+			Node nodeToExplore = promisingNode;
 			if (promisingNode.childArray.size() > 0)
 				nodeToExplore = promisingNode.getRandomChildNode();
 			int playoutResult = simulateRandomPlayout(nodeToExplore);
@@ -1230,19 +1229,20 @@ public class SnakeGame extends JFrame {
 //		System.out.println();
 	}
 
-//	private static long nanoTimeStamp;
-//	private void setNanoTime(){
-//		nanoTimeStamp = System.nanoTime();
-//	}
-//
-//	/**
-//	 * Method used in the mcts loop to check if time has ran out in one interval
-//	 * @return if there's time left until the next update
-//	 */
-//	public boolean haveTimeLeft(){
-//		long currentTimeStamp = System.nanoTime();
-//		return (nanoTimeStamp + 0.5 * clockFrequency / Math.pow(1.0, 9.0)) > currentTimeStamp;
-//	}
+	private static long nanoTimeStamp;
+	private void setNanoTime(){
+		nanoTimeStamp = System.nanoTime();
+	}
+
+	/**
+	 * Method used in the mcts loop to check if time has ran out in one interval
+	 * @return if there's time left until the next update
+	 */
+	public boolean haveTimeLeft(){
+		System.out.println("Time: " +  System.nanoTime());
+		System.out.println((nanoTimeStamp + FRAME_TIME / 2) > System.nanoTime());
+		return (nanoTimeStamp + FRAME_TIME / 2) > System.nanoTime();
+	}
 }
 
 
