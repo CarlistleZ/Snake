@@ -1071,6 +1071,87 @@ public class SnakeGame extends JFrame {
 		SnakeGame snake = new SnakeGame(solverMode);
 		snake.startGamePlayer(solverMode);
 	}
+	
+	private void greedyPath() {
+		System.out.println("\nGreedy path called! Fruit: " + fruitX + ", " + fruitY);
+		Point head = snake.peekFirst();
+		System.out.println("Head: " + head);
+		double headX = head.getY(), headY = head.getX();
+		int fruitX = this.fruitY;
+		int fruitY = this.fruitX;
+		if (headX >  fruitX) {
+			if(board.getTile((int)headX - 1, (int)headY) != TileType.SnakeBody){
+				// North is clear
+				System.out.println("Going north");
+				goNorthAI();
+			} else {
+				// Take a detour towards west or east
+				detourWE();
+			}
+		} else if (headX <  fruitX){
+			if (board.getTile((int)headX + 1, (int)headY) != TileType.SnakeBody){
+				// South is clear
+				System.out.println("Going south");
+				goSouthAI();
+			} else {
+				// Take a detour towards west or east
+				detourWE();
+			}
+
+		} else {
+			// The fruit and the head is at the same line
+			if (headY < fruitY) {        // ...H......F...
+				if (board.getTile((int)headX, (int)headY + 1) != TileType.SnakeBody){
+					// East is clear
+					System.out.println("Going east");
+					goEastAI();
+				} else {
+					// Take a detour towards north or south
+					detourNS();
+				}
+			} else {
+				if (board.getTile((int)headX, (int)headY - 1) != TileType.SnakeBody){
+					// West is clear
+					System.out.println("Going west");
+					goWestAI();
+				} else {
+					// Take a detour towards north or south
+					detourNS();
+				}
+			}
+		}
+	}
+
+	private void detourWE() {
+		System.out.println("Detour called");
+		Point head = snake.peekFirst();
+		double headX = head.getY(), headY = head.getX();
+		int fruitX = this.fruitY;
+		int fruitY = this.fruitX;
+		// North or south is blocked here, go towards west or east to take a detour (if possible)
+		if (board.getTile((int)headX, (int)headY + 1) != TileType.SnakeBody){
+			goEastAI();
+		} else if (board.getTile((int)headX, (int)headY - 1) != TileType.SnakeBody) {
+			goWestAI();
+		}
+		// Else the snake is in a tunnel... The only way out is to go straight
+		// Do nothing here to go straight
+	}
+
+	private void detourNS() {
+		System.out.println("Detour called");
+		Point head = snake.peekFirst();
+		double headX = head.getY(), headY = head.getX();
+		int fruitX = this.fruitY;
+		int fruitY = this.fruitX;
+		if (board.getTile((int)headX + 1, (int)headY) != TileType.SnakeBody){
+			goSouthAI();
+		} else if (board.getTile((int)headX - 1, (int)headY) != TileType.SnakeBody) {
+			goNorthAI();
+		}
+		// Else the snake is in a tunnel... The only way out is to go straight
+		// Do nothing here to go straight
+	}
 
 
 	/**
