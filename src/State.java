@@ -4,8 +4,14 @@ import java.util.List;
 
 public class State {
     static final int IN_PROGRESS = 0;
-    static final int PLAYER_WIN = -1;
-    static final int AI_WIN = 1;
+    static final int PLAYER_WIN = -20;
+    static final int AI_WIN = 5000;
+    //static final int AI_KMS = -100000;
+    static final int PLAYER_CRASH_WIN = -8;
+    static final int AI_CRASH_WIN = 0;
+    static final int PLAYER_KMS_WIN = -2;
+    static final int PLAYER_BOARD_WIN = -400;
+    static final int AI__BOARD_WIN = 0;
 
     BoardPanel board;
     LinkedList<Point> snake, playerSnake;
@@ -80,11 +86,16 @@ public class State {
                 head.y--;
                 break;
         }
+
         if (!board.inBoard(head)) {
+            //System.err.println("return null for on board");
             return null;
         }
-        if (board.getTile(head) == TileType.SnakeBody)
+        if (board.getTile(head) == TileType.SnakeBody){
+            //System.err.println("return null for any kind of crash");
             return null;
+        }
+
 
         if(neighbor.isAI){
             neighbor.snake.addFirst(head);
@@ -113,7 +124,8 @@ public class State {
 //        this.board.performMove(this.playerNo, availablePositions.get(selectRandom));
         LinkedList<Point> snakeToCheck = isAI ? snake : playerSnake;
         List<State>neighborList = neighbors(snakeToCheck);
-        int selectRandom = (int) (Math.random() * neighborList.size());
+        int selectRandom;
+        selectRandom = (int) (Math.random() * neighborList.size());
         return neighborList.get(selectRandom);
     }
 
@@ -125,16 +137,37 @@ public class State {
         LinkedList<Point> snakeToCheck = isAI ? snake : playerSnake;
         // System.out.println("Checking status for: isAI= " + isAI + " at: " + snakeToCheck.peekFirst());
         if (!board.inBoard(snakeToCheck.peekFirst())){
-            return isAI ? PLAYER_WIN : AI_WIN;
+            //System.out.println(isAI+" on board");
+            return isAI ? PLAYER_BOARD_WIN : AI__BOARD_WIN;
         }else if(snakeToCheck.peekFirst().x == board.fruitX && snakeToCheck.peekFirst().y == board.fruitY){
+            //System.out.println(isAI+" fruit win");
             return isAI ? AI_WIN : PLAYER_WIN;
+        }else if(kms(isAI,snakeToCheck.peekFirst())) {
+            //System.out.println(isAI+" kms");
+            return PLAYER_KMS_WIN;
         }else if(onSnakes(isAI, snakeToCheck.peekFirst())) {
-            return isAI ? PLAYER_WIN : AI_WIN;
+            //System.out.println(isAI+" crash");
+            return isAI ? PLAYER_CRASH_WIN : AI_CRASH_WIN;
         }else {
             return IN_PROGRESS;
         }
     }
 
+    private boolean kms(Boolean isAI, Point headToCheck) {
+        if (isAI) {
+            for (Point p : this.snake) {
+                if (p == headToCheck) {
+                    continue;
+                } else {
+                    if (p.equals(headToCheck)) {
+
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     /*
      * Checks if the headToCheck overlaps any snake body
      */

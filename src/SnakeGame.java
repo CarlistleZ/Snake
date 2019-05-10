@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 import javax.swing.JFrame;
 
+import static jdk.nashorn.internal.objects.Global.println;
+
 /**
  * The {@code SnakeGame} class is responsible for handling much of the game's logic.
  *
@@ -322,15 +324,24 @@ public class SnakeGame extends JFrame {
 	}
 
 	private void goTowardsDirection(Direction dir){
+		System.out.print("goTowardsDirection:");
 		switch (dir){
 			case East:
+				System.out.println("going east");
 				goEastAI();
+				break;
 			case West:
+				System.out.println("going west");
 				goWestAI();
+				break;
 			case North:
+				System.out.println("going north");
 				goNorthAI();
+				break;
 			case South:
+				System.out.println("going south");
 				goSouthAI();
+				break;
 		}
 	}
 
@@ -381,11 +392,10 @@ public class SnakeGame extends JFrame {
 	private void goNorthAI(){
 		if(!isPaused && !isGameOver) {
 			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if ((last != Direction.South && last != Direction.North)&&
-						(board.getTile(snake.peekFirst().x,snake.peekFirst().y - 1) != TileType.SnakeBody)) {
-					directions.addLast(Direction.North);
-				}
+				//Direction last = directions.peekLast();
+				directions.clear();
+				directions.addLast(Direction.North);
+				System.out.println("goNorthAI: "+directions.size()+" "+directions.contains(Direction.North));
 			}
 		}
 	}
@@ -393,11 +403,10 @@ public class SnakeGame extends JFrame {
 	private void goSouthAI(){
 		if(!isPaused && !isGameOver) {
 			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if((last != Direction.North && last != Direction.South) &&
-						(board.getTile(snake.peekFirst().x,snake.peekFirst().y + 1) != TileType.SnakeBody)){
-					directions.addLast(Direction.South);
-				}
+				//Direction last = directions.peekLast();
+				directions.clear();
+				directions.addLast(Direction.South);
+				System.out.println("goSouthAI: "+directions.size()+" "+directions.contains(Direction.South));
 			}
 		}
 	}
@@ -405,11 +414,10 @@ public class SnakeGame extends JFrame {
 	private void goEastAI(){
 		if(!isPaused && !isGameOver) {
 			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if ((last != Direction.West && last != Direction.East) &&
-						(board.getTile(snake.peekFirst().x + 1,snake.peekFirst().y) != TileType.SnakeBody)){
-					directions.addLast(Direction.East);
-				}
+				//Direction last = directions.peekLast();
+				directions.clear();
+				directions.addLast(Direction.East);
+				System.out.println("goEastAI: "+directions.size()+" "+directions.contains(Direction.East));
 			}
 		}
 	}
@@ -417,11 +425,10 @@ public class SnakeGame extends JFrame {
 	private void goWestAI(){
 		if(!isPaused && !isGameOver) {
 			if(directions.size() < MAX_DIRECTIONS) {
-				Direction last = directions.peekLast();
-				if((last != Direction.East && last != Direction.West) &&
-						(board.getTile(snake.peekFirst().x - 1,snake.peekFirst().y) != TileType.SnakeBody)) {
-					directions.addLast(Direction.West);
-				}
+				//Direction last = directions.peekLast();
+				directions.clear();
+				directions.addLast(Direction.West);
+				System.out.println("goWestAI: "+directions.size()+" "+directions.contains(Direction.West));
 			}
 		}
 	}
@@ -675,7 +682,7 @@ public class SnakeGame extends JFrame {
 			else if(myY == parentY - 1)
 				return Direction.North;
 			else{
-				System.err.println("Error in state!");
+				System.out.println("Error in state!");
 				return null;
 			}
 		}
@@ -694,7 +701,7 @@ public class SnakeGame extends JFrame {
 		else if(secondToLastY == midY - 1)
 			return Direction.North;
 		else{
-			System.err.println("Error: wrong state to use initial direction");
+			System.out.println("Error: wrong state to use initial direction");
 			return null;
 		}
 	}
@@ -760,11 +767,13 @@ public class SnakeGame extends JFrame {
 		 * the snake hit a wall, SnakeBody will be returned, as both conditions
 		 * are handled identically.
 		 */
+
+
 		TileType collision = updateSnake(snake,directions);
 
 		TileType player_collision = null;
 		if (solverMode == SolverMode.MCTS)
-			updateSnake(player_snake, playerDirections);
+			player_collision = updateSnake(player_snake, playerDirections);
 		/*
 		 * Here we handle the different possible collisions.
 		 *
@@ -779,23 +788,34 @@ public class SnakeGame extends JFrame {
 		 * bit of skill to the game as collecting fruits more quickly will
 		 * yield a higher moves.
 		 */
+		int distance = Math.abs(fruitY-snake.peekFirst().y)+Math.abs(fruitX-snake.peekFirst().x);
 		if(collision == TileType.Fruit) {
 			fruitsEaten++;
 			score += nextFruitScore;
 			spawnFruit(solverMode);
-		} else if(collision == TileType.SnakeBody || (solverMode == SolverMode.MCTS && player_collision == TileType.SnakeBody)) {
+			tree = null;
+			distance = Math.abs(fruitY-snake.peekFirst().y)+Math.abs(fruitX-snake.peekFirst().x);
+			//mcts(new GameState(this, 0, getHeuristic(snake)), false);
+		} else if(collision == TileType.SnakeBody || player_collision == TileType.SnakeBody) {
 			isGameOver = true;
 			logicTimer.setPaused(true);
-		} else if(nextFruitScore > 10) {
-			nextFruitScore--;
-		}
-		if(solverMode == SolverMode.MCTS && player_collision == TileType.Fruit) {
+		}else if(player_collision == TileType.Fruit) {
 			fruitsEaten++;
 			score += nextFruitScore;
 			spawnFruit(solverMode);
+			distance = Math.abs(fruitY-snake.peekFirst().y)+Math.abs(fruitX-snake.peekFirst().x);
+			tree = null;
+			//mcts(new GameState(this, 0, getHeuristic(snake)), false);
 		} else {
-			if (solverMode == SolverMode.MCTS)
-				mcts(new GameState(this, 0, getHeuristic(snake)), false);
+			if(nextFruitScore>10) {
+				nextFruitScore--;
+			}
+		}
+
+		if(distance<10){
+			idAStar();
+		}else{
+			mcts(new GameState(this, 0, getHeuristic(snake)), false);
 		}
 	}
 
@@ -824,20 +844,25 @@ public class SnakeGame extends JFrame {
 		 * after the update.
 		 */
 		Point head = new Point(snake_update.peekFirst());
+		System.out.print("("+head.x+","+head.y+")");
 		switch(direction) {
 			case North:
+				System.out.println("going north");
 				head.y--;
 				break;
 
 			case South:
+				System.out.println("going south");
 				head.y++;
 				break;
 
 			case West:
+				System.out.println("going west");
 				head.x--;
 				break;
 
 			case East:
+				System.out.println("going east");
 				head.x++;
 				break;
 		}
@@ -848,6 +873,7 @@ public class SnakeGame extends JFrame {
 		 * identically.
 		 */
 		if(head.x < 0 || head.x >= BoardPanel.COL_COUNT || head.y < 0 || head.y >= BoardPanel.ROW_COUNT) {
+			System.out.println("Touching the wall");
 			return TileType.SnakeBody; //Pretend we collided with our body.
 		}
 
@@ -1027,7 +1053,8 @@ public class SnakeGame extends JFrame {
 				idAStar();
 				break;
 			case MCTS:
-				mcts(new GameState(this, 0, getHeuristic(snake)), true);
+				tree = null;
+				//mcts(new GameState(this, 0, getHeuristic(snake)), true);
 				break;
 		}
 	}
@@ -1169,7 +1196,7 @@ public class SnakeGame extends JFrame {
 		System.out.println(this);
 		Node rootNode = null;
 		// Initialize from a snake game state
-		if (true){
+		if (tree == null){
 			tree = new Tree();
 			// Initialize root here
 			rootNode = tree.getRoot();
@@ -1182,25 +1209,47 @@ public class SnakeGame extends JFrame {
 			 * Here is the state where we move down the tree according to what the
 			 * player does during the last cycle.
 			 */
-			if(!gameState.snake.peekFirst().equals(tree.getRoot().state.snake.peekFirst())){
+			if((!gameState.snake.peekFirst().equals(tree.getRoot().state.snake.peekFirst()))||tree.getRoot().childArray.isEmpty()){
+				/*System.out.println("===inconsistent feedback===");
+				System.out.println("current head position: ("+gameState.snake.peekFirst().x+","+gameState.snake.peekFirst().y+")");
+				System.out.println("root head position: ("+tree.getRoot().state.snake.peekFirst().x+","+tree.getRoot().state.snake.peekFirst().y+")");
 				System.err.println("Inconsistent state!");
-				System.exit(999);
-			}
-			System.out.println("\nPlayer snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
-			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
-			boolean assigned = false;
-			for (Node node: tree.getRoot().childArray){
-				if ( (node.state.playerSnake.peekFirst().equals(this.player_snake.peekFirst()))){
-					tree.setRoot(node);
-					node.parent = null;
-					rootNode = tree.getRoot();
-					assigned = true;
-					break;
+				System.exit(999);*/
+				System.err.println("Restarting the tree beacause of the inconsistent state");
+				tree = new Tree();
+				// Initialize root here
+				rootNode = tree.getRoot();
+				rootNode.state.board = board;
+				rootNode.state.snake = gameState.snake;
+				rootNode.state.playerSnake = gameState.player_snake;
+				rootNode.state.isAI = true;
+			}else{
+				System.out.println("\nPlayer snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
+				System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
+				boolean assigned = false;
+				System.out.println("#####Player Children######");
+				for (Node node: tree.getRoot().childArray){
+					System.out.println("("+node.state.playerSnake.peekFirst().x+","+node.state.playerSnake.peekFirst().y+")");
+					if ( (node.state.playerSnake.peekFirst().equals(this.player_snake.peekFirst()))){
+						tree.setRoot(node);
+						node.parent = null;
+						rootNode = tree.getRoot();
+						assigned = true;
+						break;
+					}
 				}
-			}
-			if(!assigned){
-				System.err.println("Can not assign a child node!");
-				System.exit(999);
+				System.out.println("#####################");
+				if(!assigned){
+					System.err.println("Restaring the tree beacuse it Can not assign a child node!");
+					tree = new Tree();
+					// Initialize root here
+					rootNode = tree.getRoot();
+					rootNode.state.board = board;
+					rootNode.state.snake = gameState.snake;
+					rootNode.state.playerSnake = gameState.player_snake;
+					rootNode.state.isAI = true;
+					//System.exit(999);
+				}
 			}
 		}
 
@@ -1220,8 +1269,60 @@ public class SnakeGame extends JFrame {
 			backPropagation(nodeToExplore, playoutResult);
 			MCTSLoopCounter++;
 		}
+		System.out.println("=====Root Node=====");
+		System.out.println("("+rootNode.state.snake.peekFirst().x+","+rootNode.state.snake.peekFirst().y+")");
+		System.out.println("Score:"+rootNode.state.winScore);
+		System.out.println("==================");
+		System.out.println("=====Children=====");
+		for(Node n : rootNode.childArray){
+			System.out.println("("+n.state.snake.peekFirst().x+","+n.state.snake.peekFirst().y+")");
+			System.out.println("Score:"+n.state.winScore);
+		}
+		System.out.println("==================");
+
 		// Return the best predictable direction so far
-		Node winnerNode = rootNode.getChildWithMinMaxScore();
+        boolean selected = false;
+        Node winnerNode = rootNode.getChildWithMinMaxScore();
+        /*System.out.println("=====Original Winner Node=====");
+        System.out.println("("+winnerNode.state.snake.peekFirst().x+","+winnerNode.state.snake.peekFirst().y+")");
+        System.out.println("Score:"+winnerNode.state.winScore);
+        System.out.println("==================");
+		System.out.print("snake body: ");
+		for(Point pp:snake){
+			System.out.print("("+pp.x+","+pp.y+") ");
+		}
+		System.out.println("");
+		System.out.println("===================");*/
+        while(!selected) {
+            Point new_snake_head = winnerNode.state.snake.peekFirst();
+            boolean nocrash = true;
+            for(Point p:snake){
+                if(p.equals(new_snake_head)||new_snake_head.x<0||new_snake_head.x>=25||new_snake_head.y<0||new_snake_head.y>=25){
+                    /*System.out.println("----- delete node information ------");
+                    System.out.println("next step: ("+winnerNode.state.snake.peekFirst().x+","+winnerNode.state.snake.peekFirst().y+")");
+                    System.out.print("snake body: ");
+                    for(Point pp:snake){
+                    	System.out.print("("+pp.x+","+pp.y+") ");
+					}
+                    System.out.println("");
+                    System.out.println("---------------------------------");*/
+                    nocrash = false;
+                    rootNode.childArray.remove(winnerNode);
+                    break;
+                }
+            }
+            if(nocrash||rootNode.childArray.isEmpty()){
+                selected = true;
+            }else{
+                winnerNode = rootNode.getChildWithMinMaxScore();
+            }
+
+        }
+
+		System.out.println("=====Final Winner Node=====");
+		System.out.println("("+winnerNode.state.snake.peekFirst().x+","+winnerNode.state.snake.peekFirst().y+")");
+		System.out.println("Score:"+winnerNode.state.winScore);
+		System.out.println("==================");
 		Direction dir = tree.root.getDirectionfromChild(winnerNode);
 		tree.setRoot(winnerNode);
 		rootNode = winnerNode;
