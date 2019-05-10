@@ -322,15 +322,74 @@ public class SnakeGame extends JFrame {
 	}
 
 	private void goTowardsDirection(Direction dir){
-		switch (dir){
-			case East:
+		boolean bl = isCorrectDirection(dir);
+		System.out.println("Correct direction? " + bl);
+		if (bl){
+			switch (dir){
+				case East:
+					goEastAI();
+					break;
+				case West:
+					goWestAI();
+					break;
+				case North:
+					goNorthAI();
+					break;
+				case South:
+					goSouthAI();
+					break;
+			}
+		} else {
+			goToCorrectedDirection();
+		}
+	}
+
+	private void goToCorrectedDirection() {
+		double headX = snake.peekFirst().getX();
+		double headY = snake.peekFirst().getY();
+		if (headX < fruitX){
+			if(board.getTile((int)headX + 1, (int)headY) == TileType.SnakeBody)
+				detourNS();
+			else
 				goEastAI();
-			case West:
+		} else if (headX > fruitX) {
+			if(board.getTile((int)headX - 1, (int)headY) == TileType.SnakeBody)
+				detourNS();
+			else
 				goWestAI();
+		} else {
+			// headX == fruitX
+			if (headY > fruitY) {
+				if(board.getTile((int)headX, (int)headY - 1) == TileType.SnakeBody)
+					detourWE();
+				else
+					goNorthAI();
+			} else if (headY < fruitY){
+				if(board.getTile((int)headX, (int)headY + 1) == TileType.SnakeBody)
+					detourWE();
+				else
+					goSouthAI();
+			}
+		}
+
+	}
+
+	private boolean isCorrectDirection(Direction direction) {
+		double headX = snake.peekFirst().getX();
+		double headY = snake.peekFirst().getY();
+		if (headX == fruitX && headY == fruitY)
+			return true;
+		switch (direction){
+			case West:
+				return fruitX < headX;
+			case East:
+				return fruitX > headX;
 			case North:
-				goNorthAI();
+				return fruitY < headY;
 			case South:
-				goSouthAI();
+				return fruitY > headY;
+			default:
+				return false;
 		}
 	}
 
@@ -1169,7 +1228,7 @@ public class SnakeGame extends JFrame {
 		System.out.println(this);
 		Node rootNode = null;
 		// Initialize from a snake game state
-		if (true){
+		if (tree == null){
 			tree = new Tree();
 			// Initialize root here
 			rootNode = tree.getRoot();
@@ -1183,8 +1242,11 @@ public class SnakeGame extends JFrame {
 			 * player does during the last cycle.
 			 */
 			if(!gameState.snake.peekFirst().equals(tree.getRoot().state.snake.peekFirst())){
-				System.err.println("Inconsistent state!");
-				System.exit(999);
+				tree = null;
+				goToCorrectedDirection();
+				return;
+//				System.err.println("Inconsistent state!");
+//				System.exit(999);
 			}
 			System.out.println("\nPlayer snake should be at: " + tree.getRoot().state.playerSnake.peekFirst());
 			System.out.println("Player snake is at: " + gameState.player_snake.peekFirst());
@@ -1199,17 +1261,16 @@ public class SnakeGame extends JFrame {
 				}
 			}
 			if(!assigned){
-				System.err.println("Can not assign a child node!");
-				System.exit(999);
+				goToCorrectedDirection();
+				return;
+//				System.err.println("Can not assign a child node!");
+//				System.exit(999);
 			}
 		}
 
 //		System.out.println("State: " + rootNode.state);
 		MCTSLoopCounter = 0;
 		while(MCTSLoopCounter < 200){
-			if( MCTSLoopCounter == 98){
-				boolean bl = true;
-			}
 			Node promisingNode = selectPromisingNode(rootNode);
 			if(!isGoal(promisingNode.state.snake))
 				expandNode(promisingNode);

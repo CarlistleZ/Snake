@@ -4,8 +4,8 @@ import java.util.List;
 
 public class State {
     static final int IN_PROGRESS = 0;
-    static final int PLAYER_WIN = -1;
-    static final int AI_WIN = 1;
+    static final int PLAYER_WIN = -5;
+    static final int AI_WIN = 5;
 
     BoardPanel board;
     LinkedList<Point> snake, playerSnake;
