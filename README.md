@@ -50,6 +50,8 @@ In function selectPromisingNode, for a given node, the UCB formula
 
 ![ucb formula|726×298](https://github.com/SeanZheng21/Snake-AI-MCTS/blob/master/images/ucb.png)
 
+<img src="https://github.com/SeanZheng21/Snake-AI-MCTS/blob/master/images/ucb.png" alt="ucb formula" width="200"/>
+
 helps to choose the best child node that maximizes(for AI) or minimizes (for player) the UCB value with:    
 * Vi: child state i’s score/visit pair,
 * N: total visit,         
